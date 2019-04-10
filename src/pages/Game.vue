@@ -1,7 +1,7 @@
 <template>
   <div class="flex column">
 
-    <v-stage ref="stage" :config="{width: 600, height: 1000}">
+    <v-stage ref="stage" :config="{width: 10000, height: 1000}">
       <v-layer ref="layer">
         <div class="flex row" :key="`board-row-${i}`" v-for="(row, i) in board">
           <div :key="`board-row-${i}-column-${j}`" v-for="(triangle, j) in row">
@@ -10,7 +10,7 @@
               :positionX="triangle.positionX"
               :positionY="triangle.positionY"
               :length="triangleLength"
-              :direction="(i % 2 + j % 2) % 2 === 0 ? 'up' : 'down'"
+              :direction="triangle.direction"
               :color="triangle.color"
               :hovered="hoveredElement === triangle"
             />
@@ -27,6 +27,9 @@
             :draggable="true"
             :length="triangleLength"
             :direction="triangle.direction"
+            :text-hypotenuse="triangle.textHypotenuse"
+            :text-left="triangle.textLeft"
+            :text-right="triangle.textRight"
             :toggle="triangle.toggle"
             @dragend="handleDragEnd"
             @dragmove="handleDragMove"
@@ -61,9 +64,12 @@ export default {
           [{ placeholder: true }, { filled: true }, { placeholder: true }]
         ],
         missingElements: [
-          { direction: 'down', textHypotenuse: '1', textLeft: '2', textRight: '3' },
-          { direction: 'down', textHypotenuse: '1', textLeft: '2', textRight: '3' },
-          { direction: 'down', textHypotenuse: '1', textLeft: '2', textRight: '3' }
+          { direction: 'down',
+            textHypotenuse: '1',
+            textRight: '3'
+          },
+          { direction: 'down', textHypotenuse: '2', textLeft: '3' },
+          { direction: 'down', textLeft: '3', textRight: '1' }
         ]
       }
     }
@@ -82,6 +88,7 @@ export default {
           triangle.positionY = rowIndex * ((Math.sqrt(3) / 2) * this.triangleLength)
           triangle.rowIndex = rowIndex
           triangle.columnIndex = columnIndex
+          triangle.direction = (rowIndex % 2 + columnIndex % 2) % 2 === 0 ? 'up' : 'down'
           return triangle
         })
       })

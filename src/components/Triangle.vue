@@ -1,5 +1,10 @@
 <template>
-    <v-shape ref="shape" :config="configTriangle" @dragstart="handleDragStart" @dragend="handleDragEnd" @dragmove="handleDragMove" />
+  <v-group :config="configGroup" @dragstart="handleDragStart" @dragend="handleDragEnd" @dragmove="handleDragMove" >
+    <v-shape ref="shape" :config="configTriangle"/>
+    <v-text :config="configBottomText"/>
+    <v-text :config="configLeftText"/>
+    <v-text :config="configRightText"/>
+  </v-group>
 </template>
 
 <script>
@@ -47,38 +52,38 @@ export default {
     height () {
       return (Math.sqrt(3) / 2) * this.length
     },
-    configTriangle () {
+    rotation () {
+      switch (this.direction) {
+        case 'up':
+          return 0
+        case 'right':
+          return 90
+        case 'down':
+          return 180
+        case 'left':
+          return -90
+      }
+      return 0
+    },
+    configGroup () {
       const offset = this.toggle ? 1 : 0
       return {
-        x: this.positionX - offset,
-        y: this.positionY - offset,
+        draggable: this.draggable,
+        x: this.positionX + this.length / 2 + offset,
+        y: this.positionY + this.height / 2 + offset,
+        rotation: this.rotation
+      }
+    },
+    configTriangle () {
+      return {
         object: this.object,
         fill: this.color,
-        draggable: this.draggable,
         sceneFunc: (context, shape) => {
+          const offset = this.toggle ? 1 : 0
           context.beginPath()
-          switch (this.direction) {
-            case 'right':
-              context.moveTo(0 + offset, 0 + offset)
-              context.lineTo(this.height + offset, (this.length / 2) + offset)
-              context.lineTo(0 + offset, this.length + offset)
-              break
-            case 'up':
-              context.moveTo(0 + offset, this.height + offset)
-              context.lineTo((this.length / 2) + offset, 0 + offset)
-              context.lineTo(this.length + offset, this.height + offset)
-              break
-            case 'left':
-              context.moveTo(this.height + offset, this.length + offset)
-              context.lineTo(0 + offset, (this.length / 2) + offset)
-              context.lineTo(this.height + offset, 0 + offset)
-              break
-            case 'down':
-              context.moveTo(this.length + offset, 0 + offset)
-              context.lineTo((this.length / 2) + offset, this.height + offset)
-              context.lineTo(0 + offset, 0 + offset)
-              break
-          }
+          context.moveTo(-1 * (this.length / 2) + offset, this.height / 2 + offset)
+          context.lineTo(offset, -this.height / 2 + offset)
+          context.lineTo(this.length / 2 + offset, this.height / 2 + offset)
           context.closePath()
           context.fillStrokeShape(shape)
         },
@@ -87,38 +92,87 @@ export default {
         strokeEnabled: !!this.hovered
       }
     },
-    leftTextStyle () {
+    configBottomText () {
+      const config = {
+        text: this.textHypotenuse,
+        fontSize: 15
+      }
       switch (this.direction) {
         case 'up':
         case 'right':
-          return { transform: 'rotate(-60deg) translateX(50%)' }
         case 'left':
+          config.x = 0
+          config.y = this.height / 2 - config.fontSize
+          break
         case 'down':
-          return { transform: 'rotate(120deg) translateX(-50%)' }
+          config.x = 0
+          config.y = this.height / 2
+          config.rotation = 180
+          break
       }
-      return {}
+      return config
     },
-    rightTextStyle () {
+    configLeftText () {
+      const config = {
+        text: this.textLeft,
+        fontSize: 15
+      }
       switch (this.direction) {
         case 'up':
-        case 'left':
-          return { transform: 'rotate(60deg) translateX(-50%)' }
+          config.x = -this.length / 4
+          config.y = config.fontSize
+          config.rotation = -60
+          break
         case 'down':
+          config.x = -this.length / 4
+          config.y = 0
+          config.lineHeight = -1
+          config.rotation = 120
+          break
         case 'right':
-          return { transform: 'rotate(-120deg) translateX(50%)' }
+          config.x = -this.length / 4
+          config.y = 0
+          config.rotation = -60
+          break
+        case 'left':
+          config.x = -this.length / 4
+          config.y = 0
+          config.lineHeight = -1
+          config.rotation = 120
+          break
       }
-      return {}
+      return config
     },
-    bottomTextStyle () {
+    configRightText () {
+      const config = {
+        text: this.textRight,
+        fontSize: 15
+      }
       switch (this.direction) {
         case 'up':
-        case 'right':
-        case 'left':
-          return { transform: 'translateX(-50%) translateY(-50%)' }
+          config.x = this.length / 4
+          config.y = 0
+          config.rotation = 60
+          break
         case 'down':
-          return { transform: 'rotate(180deg) translateX(50%) translateY(50%)' }
+          config.x = this.length / 4
+          config.y = 0
+          config.lineHeight = -1
+          config.rotation = -120
+          break
+        case 'right':
+          config.x = this.length / 4
+          config.y = 0
+          config.lineHeight = -1
+          config.rotation = -120
+          break
+        case 'left':
+          config.x = this.length / 4
+          config.y = 0
+          config.rotation = 60
+          break
       }
-      return {}
+      return config
     }
   },
   methods: {
