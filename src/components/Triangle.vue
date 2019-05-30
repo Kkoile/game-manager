@@ -1,5 +1,5 @@
 <template>
-  <v-group :config="configGroup" @dragstart="handleDragStart" @dragend="handleDragEnd" @dragmove="handleDragMove" >
+  <v-group :config="configGroup" @click="handleClick" @dragstart="handleDragStart" @dragend="handleDragEnd" @dragmove="handleDragMove" >
     <v-shape ref="shape" :config="configTriangle"/>
     <v-text :config="configBottomText"/>
     <v-text :config="configLeftText"/>
@@ -184,6 +184,9 @@ export default {
     },
     handleDragMove (event) {
       this.$emit('dragmove', this.object, event)
+    },
+    handleClick (event) {
+      this.$emit('click', this.object, event)
     }
   }
 }

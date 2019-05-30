@@ -1,7 +1,7 @@
 <template>
   <div class="flex column">
 
-    <v-stage ref="stage" :config="{width: 10000, height: 1000}">
+    <v-stage ref="stage" :config="{width: 10000, height: 600}">
       <v-layer ref="layer">
         <div class="flex row" :key="`board-row-${i}`" v-for="(row, i) in board">
           <div :key="`board-row-${i}-column-${j}`" v-for="(triangle, j) in row">
@@ -34,11 +34,14 @@
           :text-left="triangle.textLeft"
           :text-right="triangle.textRight"
           :toggle="triangle.toggle"
+          :hovered="triangle.selected"
           @dragend="handleDragEnd"
           @dragmove="handleDragMove"
+          @click="handleClick"
         />
       </v-layer>
     </v-stage>
+    <q-btn :disabled="elementsToOperate.length < 2" @click="addElements">+</q-btn>
   </div>
 </template>
 
@@ -53,6 +56,7 @@ export default {
   data () {
     return {
       hoveredElement: null,
+      elementsToOperate: [],
       triangleLength: 200,
       colors: [
         'green',
@@ -149,6 +153,41 @@ export default {
       } else {
         this.hoveredElement = null
       }
+    },
+    handleClick (clickedTriangle) {
+      if (clickedTriangle.selected) {
+        clickedTriangle.selected = false
+        const index = this.elementsToOperate.findIndex((triangle) => triangle.index === clickedTriangle.index)
+        this.$delete(this.elementsToOperate, index)
+      } else {
+        clickedTriangle.selected = true
+        this.elementsToOperate.push(clickedTriangle)
+      }
+      this.$set(this.game.missingElements, clickedTriangle.index, clickedTriangle)
+    },
+    addElements () {
+      const valueHypotenuse = this.elementsToOperate.reduce((accumulator, triangle) => accumulator + triangle.valueHypotenuse, 0)
+      const valueRight = this.elementsToOperate.reduce((accumulator, triangle) => accumulator + triangle.valueRight, 0)
+      const valueLeft = this.elementsToOperate.reduce((accumulator, triangle) => accumulator + triangle.valueLeft, 0)
+      const newTriangle = {
+        direction: this.elementsToOperate[0].direction,
+        valueHypotenuse: valueHypotenuse,
+        textHypotenuse: `${valueHypotenuse}`,
+        textLeft: `${valueLeft}`,
+        valueLeft: valueLeft,
+        textRight: `${valueRight}`,
+        valueRight: valueRight
+      }
+      this.elementsToOperate.sort((a, b) => a.index < b.index).forEach((triangle) => {
+        this.$delete(this.game.missingElements, triangle.index)
+      })
+      this.game.missingElements.forEach((triangle, index) => {
+        triangle.positionX = undefined
+        triangle.positionY = undefined
+        this.$set(this.game.missingElements, index, triangle)
+      })
+      this.game.missingElements.push(newTriangle)
+      this.elementsToOperate = []
     }
   }
 }
