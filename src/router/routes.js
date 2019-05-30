@@ -5,7 +5,7 @@ const routes = [
     component: () => import('pages/Index.vue')
   },
   {
-    path: '/game',
+    path: '/game/:identifier',
     component: () => import('pages/Game.vue')
   }
 ]

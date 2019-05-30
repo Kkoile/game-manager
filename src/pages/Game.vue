@@ -11,6 +11,9 @@
               :positionY="triangle.positionY"
               :length="triangleLength"
               :direction="triangle.direction"
+              :text-hypotenuse="triangle.textHypotenuse"
+              :text-left="triangle.textLeft"
+              :text-right="triangle.textRight"
               :color="triangle.color"
               :hovered="hoveredElement === triangle"
             />
@@ -18,23 +21,22 @@
         </div>
       </v-layer>
 
-      <v-layer>
-        <div class="flex row" :key="`missingElement-${i}`" v-for="(triangle, i) in missingElements">
-          <Triangle
-            :object="triangle"
-            :positionX="triangle.positionX"
-            :positionY="triangle.positionY"
-            :draggable="true"
-            :length="triangleLength"
-            :direction="triangle.direction"
-            :text-hypotenuse="triangle.textHypotenuse"
-            :text-left="triangle.textLeft"
-            :text-right="triangle.textRight"
-            :toggle="triangle.toggle"
-            @dragend="handleDragEnd"
-            @dragmove="handleDragMove"
-          />
-        </div>
+      <v-layer ref="missingElements">
+        <Triangle
+          :key="`missingElement-${i}`" v-for="(triangle, i) in missingElements"
+          :object="triangle"
+          :positionX="triangle.positionX"
+          :positionY="triangle.positionY"
+          :draggable="true"
+          :length="triangleLength"
+          :direction="triangle.direction"
+          :text-hypotenuse="triangle.textHypotenuse"
+          :text-left="triangle.textLeft"
+          :text-right="triangle.textRight"
+          :toggle="triangle.toggle"
+          @dragend="handleDragEnd"
+          @dragmove="handleDragMove"
+        />
       </v-layer>
     </v-stage>
   </div>
@@ -42,6 +44,7 @@
 
 <script>
 import Triangle from '../components/Triangle'
+import MyStorage from '../lib/storage'
 export default {
   name: 'Game',
   components: {
@@ -58,21 +61,11 @@ export default {
         'yellow',
         'pink'
       ],
-      game: {
-        board: [
-          [{ filled: true }, { placeholder: true }, { filled: true }],
-          [{ placeholder: true }, { filled: true }, { placeholder: true }]
-        ],
-        missingElements: [
-          { direction: 'down',
-            textHypotenuse: '1',
-            textRight: '3'
-          },
-          { direction: 'down', textHypotenuse: '2', textLeft: '3' },
-          { direction: 'down', textLeft: '3', textRight: '1' }
-        ]
-      }
+      game: {}
     }
+  },
+  beforeMount () {
+    this.loadGame(this.$route.params.identifier)
   },
   computed: {
     board () {
@@ -81,6 +74,18 @@ export default {
         return row.map((triangle, columnIndex) => {
           if (triangle.placeholder) {
             triangle.color = 'lightgrey'
+            if (columnIndex > 0 && row[columnIndex - 1].valueRight) {
+              triangle.valueRight = row[columnIndex - 1].valueRight
+            }
+            if (columnIndex < row.length - 2 && row[columnIndex + 1].valueLeft) {
+              triangle.valueLeft = row[columnIndex + 1].valueLeft
+            }
+            if (rowIndex > 0) {
+              const previousRow = this.game.board[rowIndex - 1]
+              if (columnIndex < previousRow.length && previousRow[columnIndex].valueHypotenuse) {
+                triangle.valueHypotenuse = previousRow[columnIndex].valueHypotenuse
+              }
+            }
           } else {
             triangle.color = this.colors[colorIndex++]
           }
@@ -105,8 +110,23 @@ export default {
     }
   },
   methods: {
-    handleDragEnd (triangle) {
-      if (this.hoveredElement) {
+    loadGame (identifier) {
+      this.game = MyStorage.loadGame(identifier)
+    },
+    trianglesMatch (placeholder, movedTriangle) {
+      if (placeholder.valueHypotenuse && placeholder.valueHypotenuse !== movedTriangle.valueHypotenuse) {
+        return false
+      }
+      if (placeholder.valueLeft && placeholder.valueLeft !== movedTriangle.valueLeft) {
+        return false
+      }
+      if (placeholder.valueRight && placeholder.valueRight !== movedTriangle.valueRight) {
+        return false
+      }
+      return true
+    },
+    handleDragEnd (triangle, event) {
+      if (this.hoveredElement && this.trianglesMatch(this.hoveredElement, triangle)) {
         triangle.positionX = this.hoveredElement.positionX
         triangle.positionY = this.hoveredElement.positionY
       } else {
@@ -121,7 +141,11 @@ export default {
       const shape = this.$refs.layer.getNode().getIntersection(event.evt)
       if (shape) {
         const object = shape.getAttr('object')
-        this.hoveredElement = object
+        if (object.placeholder) {
+          this.hoveredElement = object
+        } else {
+          this.hoveredElement = null
+        }
       } else {
         this.hoveredElement = null
       }
