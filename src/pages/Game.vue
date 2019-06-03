@@ -23,6 +23,7 @@
 
       <v-layer ref="missingElements">
         <Triangle
+          :ref="`missingElement-${i}`"
           :key="`missingElement-${i}`" v-for="(triangle, i) in missingElements"
           :object="triangle"
           :positionX="triangle.positionX"
@@ -35,6 +36,7 @@
           :text-right="triangle.textRight"
           :toggle="triangle.toggle"
           :hovered="triangle.selected"
+          :visible="!triangle.combined"
           @dragend="handleDragEnd"
           @dragmove="handleDragMove"
           @click="handleClick"
@@ -74,6 +76,9 @@ export default {
     triangleLength () {
       return this.$q.screen.width / this.game.board[0].length
     },
+    triangleHeight () {
+      return Math.sqrt(3) / 2 * this.triangleLength
+    },
     board () {
       let colorIndex = 0
       const offset = (this.$q.screen.width - this.triangleLength * (this.game.board[0].length - 1)) / 2
@@ -84,7 +89,7 @@ export default {
             if (columnIndex > 0 && row[columnIndex - 1].valueRight) {
               triangle.valueRight = row[columnIndex - 1].valueRight
             }
-            if (columnIndex < row.length - 2 && row[columnIndex + 1].valueLeft) {
+            if (columnIndex < row.length - 1 && row[columnIndex + 1].valueLeft) {
               triangle.valueLeft = row[columnIndex + 1].valueLeft
             }
             if (rowIndex > 0) {
@@ -109,7 +114,7 @@ export default {
       let indexColumn = 0
       let indexRow = 0
       return this.game.missingElements.map((triangle, index) => {
-        if (triangle.positionedOnBoard) {
+        if (triangle.positionedOnBoard || triangle.combined) {
           return triangle
         }
         triangle.index = index
@@ -119,9 +124,14 @@ export default {
         }
         triangle.originalPositionX = indexColumn * this.triangleLength
         indexColumn++
-        triangle.originalPositionY = (indexRow * (Math.sqrt(3) / 2) * this.triangleLength) + this.board.length * ((Math.sqrt(3) / 2) * this.triangleLength) + 50
-        triangle.positionX = !isNaN(triangle.positionX) ? triangle.positionX : triangle.originalPositionX
-        triangle.positionY = !isNaN(triangle.positionY) ? triangle.positionY : triangle.originalPositionY
+        triangle.originalPositionY = (indexRow * this.triangleHeight) + this.board.length * ((Math.sqrt(3) / 2) * this.triangleHeight) + 50
+        if (isNaN(triangle.positionX)) {
+          triangle.positionX = triangle.originalPositionX
+          triangle.positionY = triangle.originalPositionY
+          if (this && this.$refs && this.$refs[`missingElement-${index}`]) {
+            this.$refs[`missingElement-${index}`][0].moveTo(triangle.originalPositionX, triangle.originalPositionY)
+          }
+        }
         return triangle
       })
     }
@@ -180,6 +190,7 @@ export default {
         this.elementsToOperate.push(clickedTriangle)
       }
       this.$set(this.game.missingElements, clickedTriangle.index, clickedTriangle)
+      this.rerenderMissingTiles()
     },
     addElements () {
       const valueHypotenuse = this.elementsToOperate.reduce((accumulator, triangle) => accumulator + triangle.valueHypotenuse, 0)
@@ -195,10 +206,13 @@ export default {
         textRight: `${valueRight}`
       }
       this.elementsToOperate.sort((a, b) => { return b.index - a.index }).forEach((triangle) => {
-        this.$delete(this.game.missingElements, triangle.index)
+        triangle.combined = true
+        this.$set(this.game.missingElements, triangle.index, triangle)
       })
       this.rerenderMissingTiles()
-      this.game.missingElements.push(newTriangle)
+      setTimeout(() => {
+        this.game.missingElements.push(newTriangle)
+      }, 800)
       this.elementsToOperate = []
     },
     rerenderMissingTiles () {

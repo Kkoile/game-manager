@@ -1,5 +1,5 @@
 <template>
-  <v-group :config="configGroup" @tap="handleClick" @click="handleClick" @dragstart="handleDragStart" @dragend="handleDragEnd" @dragmove="handleDragMove" >
+  <v-group :config="configGroup" @click="handleClick" @dragend="handleDragEnd" @dragmove="handleDragMove" @dragstart="handleDragStart" @tap="handleClick" ref="node" >
     <v-shape ref="shape" :config="configTriangle"/>
     <v-text :config="configBottomText"/>
     <v-text :config="configLeftText"/>
@@ -46,6 +46,9 @@ export default {
     },
     toggle: {
       default: false
+    },
+    visible: {
+      default: true
     }
   },
   computed: {
@@ -71,7 +74,8 @@ export default {
         draggable: this.draggable,
         x: this.positionX + this.length / 2 + offset,
         y: this.positionY + this.height / 2 + offset,
-        rotation: this.rotation
+        rotation: this.rotation,
+        visible: this.visible
       }
     },
     configTriangle () {
@@ -176,6 +180,9 @@ export default {
     }
   },
   methods: {
+    moveTo (x, y) {
+      this.$refs.node.getNode().to({ x: (this.length / 2) + x, y: this.height / 2 + y })
+    },
     applyCorrdinatesToEvent (event) {
       event.evt.x = event.evt.type === 'mousemove' ? event.evt.x : event.evt.changedTouches[0].clientX
       event.evt.y = event.evt.type === 'mousemove' ? event.evt.y : event.evt.changedTouches[0].clientY
