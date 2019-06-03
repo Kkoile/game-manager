@@ -1,5 +1,5 @@
 <template>
-  <v-group :config="configGroup" @click="handleClick" @dragstart="handleDragStart" @dragend="handleDragEnd" @dragmove="handleDragMove" >
+  <v-group :config="configGroup" @tap="handleClick" @click="handleClick" @dragstart="handleDragStart" @dragend="handleDragEnd" @dragmove="handleDragMove" >
     <v-shape ref="shape" :config="configTriangle"/>
     <v-text :config="configBottomText"/>
     <v-text :config="configLeftText"/>
@@ -176,13 +176,20 @@ export default {
     }
   },
   methods: {
+    applyCorrdinatesToEvent (event) {
+      event.evt.x = event.evt.type === 'mousemove' ? event.evt.x : event.evt.changedTouches[0].clientX
+      event.evt.y = event.evt.type === 'mousemove' ? event.evt.y : event.evt.changedTouches[0].clientY
+    },
     handleDragStart (event) {
+      this.applyCorrdinatesToEvent(event)
       this.$emit('dragstart', this.object, event)
     },
     handleDragEnd (event) {
+      this.applyCorrdinatesToEvent(event)
       this.$emit('dragend', this.object, event)
     },
     handleDragMove (event) {
+      this.applyCorrdinatesToEvent(event)
       this.$emit('dragmove', this.object, event)
     },
     handleClick (event) {
