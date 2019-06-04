@@ -1,7 +1,7 @@
 
 export default {
-  loadGame: (identifier) => {
+  loadGame: (identifier, hardReload) => {
     const game = require(`../assets/levels/${identifier}.json`)
-    return game
+    return JSON.parse(JSON.stringify(game))
   }
 }

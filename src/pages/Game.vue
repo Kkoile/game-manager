@@ -1,7 +1,10 @@
 <template>
-  <div class="flex column flex-center">
-
-    <v-stage ref="stage" :config="{width: $q.screen.width, height: $q.screen.height / 5 * 4}">
+  <div class="flex justify-around items-center container column">
+    <q-btn @click="$router.go(-1)" class="closeButton" flat icon="close" />
+    <div class="flex flex-center" v-if="won">
+      <h2 align="center">Solved!</h2>
+    </div>
+    <v-stage :config="{width: $q.screen.width, height: $q.screen.height - 200}" ref="stage">
       <v-layer ref="layer">
         <div class="flex row" :key="`board-row-${i}`" v-for="(row, i) in board">
           <div :key="`board-row-${i}-column-${j}`" v-for="(triangle, j) in row">
@@ -43,7 +46,16 @@
         />
       </v-layer>
     </v-stage>
-    <q-btn :disabled="elementsToOperate.length < 2" @click="addElements">+</q-btn>
+    <div class="operationButtons" v-if="!won && elementsToOperate.length > 1">
+      <q-btn :disabled="elementsToOperate.length < 2" @click="addElements" color="primary" icon="add" round size="2rem"/>
+    </div>
+    <div
+      class="flex justify-around row controlButtons"
+      v-if="!won"
+    >
+      <q-btn @click="onUndoPressed" color="secondary" icon="undo" round size="1rem"/>
+      <q-btn @click="onRestartPressed" color="secondary" icon="delete" round size="1rem"/>
+    </div>
   </div>
 </template>
 
@@ -66,7 +78,8 @@ export default {
         'yellow',
         'pink'
       ],
-      game: {}
+      game: {},
+      won: false
     }
   },
   beforeMount () {
@@ -140,6 +153,14 @@ export default {
     loadGame (identifier) {
       this.game = MyStorage.loadGame(identifier)
     },
+    onRestartPressed () {
+      this.won = false
+      this.elementsToOperate = []
+      this.hoveredElement = null
+      const game = MyStorage.loadGame(this.$route.params.identifier, true)
+      this.game.board = game.board
+      this.game.missingElements = game.missingElements
+    },
     trianglesMatch (placeholder, movedTriangle) {
       if (placeholder.valueHypotenuse && placeholder.valueHypotenuse !== movedTriangle.valueHypotenuse) {
         return false
@@ -152,15 +173,36 @@ export default {
       }
       return true
     },
+    evaluateWinningCondition () {
+      let won = true
+      this.game.board.forEach((row) => {
+        row.forEach((triangle) => {
+          if (triangle.placeholder && !triangle.placeholderFilled) {
+            won = false
+          }
+        })
+      })
+      this.won = won
+    },
     handleDragEnd (triangle, event) {
       if (this.hoveredElement && this.trianglesMatch(this.hoveredElement, triangle)) {
         triangle.positionedOnBoard = true
         triangle.positionX = this.hoveredElement.positionX
         triangle.positionY = this.hoveredElement.positionY
+        triangle.placeholder = this.hoveredElement
+        this.hoveredElement.placeholderFilled = true
+        this.$set(this.game.board, this.hoveredElement.index, this.hoveredElement)
+        this.evaluateWinningCondition()
       } else {
         triangle.positionedOnBoard = false
         triangle.positionX = triangle.originalPositionX
         triangle.positionY = triangle.originalPositionY
+        if (triangle.placeholder) {
+          triangle.placeholder.placeholderFilled = false
+          this.$set(this.game.board, triangle.placeholder.index, triangle.placeholder)
+          triangle.placeholder = null
+          this.evaluateWinningCondition()
+        }
       }
       this.rerenderMissingTiles()
       triangle.toggle = !triangle.toggle
@@ -229,5 +271,17 @@ export default {
 </script>
 
 <style lang='stylus'>
-
+  .closeButton
+    position absolute
+    left 0.5rem
+    top 0.1rem
+    padding 0
+  .operationButtons
+    position absolute
+    bottom 6rem
+    padding 0
+  .controlButtons
+    width 10rem
+    position absolute
+    bottom 2rem
 </style>
