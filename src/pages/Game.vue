@@ -84,8 +84,16 @@ export default {
       moves: []
     }
   },
+  watch: {
+    '$route' (to, from) {
+      this.loadGame(this.$route.params.identifier)
+    }
+  },
   beforeMount () {
     this.loadGame(this.$route.params.identifier)
+  },
+  beforeDestroy () {
+    this.saveGame()
   },
   computed: {
     triangleLength () {
@@ -157,8 +165,13 @@ export default {
     }
   },
   methods: {
+    saveGame () {
+      MyStorage.saveGame(this.game.identifier, this.won, this.game.board, this.game.missingElements, this.moves)
+    },
     loadGame (identifier) {
       this.game = MyStorage.loadGame(identifier)
+      this.moves = this.game.moves
+      this.won = this.game.won
     },
     onRestartPressed () {
       this.won = false
@@ -166,7 +179,7 @@ export default {
       this.timeOutIdForApperance = null
       this.hoveredElement = null
       this.moves = []
-      const game = MyStorage.loadGame(this.$route.params.identifier, true)
+      const game = MyStorage.loadGame(this.game.identifier, true)
       this.game.board = game.board
       this.game.missingElements = game.missingElements
     },
@@ -254,7 +267,7 @@ export default {
       const shape = this.$refs.layer.getNode().getIntersection(event.evt)
       if (shape) {
         const object = shape.getAttr('object')
-        if (object.placeholder) {
+        if (object && object.placeholder) {
           this.hoveredElement = object
         } else {
           this.hoveredElement = null
@@ -320,6 +333,7 @@ export default {
     left 0.5rem
     top 0.1rem
     padding 0
+    z-index 10
   .operationButtons
     position absolute
     bottom 6rem
