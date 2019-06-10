@@ -7,11 +7,11 @@ export default {
     levels: 'Levels'
   },
   button: {
-    playAgain: 'Play Again',
-    next: 'Next'
+    playAgain: 'Nochmal Spielen',
+    next: 'Nächstes'
   },
   message: {
-    noGameLeft: 'No Game Left',
-    solved: 'Solved!'
+    noGameLeft: 'Kein weiteres Spiel',
+    solved: 'Geschafft!'
   }
 }

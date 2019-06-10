@@ -20,6 +20,9 @@ export default {
     color: {
       default: 'tomato'
     },
+    strokeColor: {
+      default: 'green'
+    },
     length: {
       default: 200
     },
@@ -91,8 +94,8 @@ export default {
           context.closePath()
           context.fillStrokeShape(shape)
         },
-        stroke: 'green',
-        strokeWidth: 10,
+        stroke: this.strokeColor,
+        strokeWidth: 5,
         strokeEnabled: !!this.hovered
       }
     },

@@ -1,5 +1,9 @@
 import enUS from './en-us'
+import deDE from './de-de'
 
 export default {
-  'en-us': enUS
+  'en-us': enUS,
+  'en': enUS,
+  'de-de': deDE,
+  'de': deDE
 }

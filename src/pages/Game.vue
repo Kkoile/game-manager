@@ -2,7 +2,7 @@
   <div class="flex justify-around items-center container column">
     <q-btn @click="$router.go(-1)" class="closeButton" flat icon="close" />
     <div class="flex flex-center" v-if="won">
-      <h2 align="center">Solved!</h2>
+      <h2 align="center">{{$t('message.solved')}}</h2>
     </div>
     <v-stage :config="{width: $q.screen.width, height: $q.screen.height - 200}" ref="stage">
       <v-layer ref="layer">
@@ -18,6 +18,7 @@
               :text-left="triangle.textLeft"
               :text-right="triangle.textRight"
               :color="triangle.color"
+              strokeColor="#B5EAD7"
               :hovered="hoveredElement === triangle"
             />
           </div>
@@ -40,6 +41,8 @@
           :toggle="triangle.toggle"
           :hovered="triangle.selected"
           :visible="!triangle.combined"
+          color="#FF9AA2"
+          strokeColor="#B5EAD7"
           @dragstart="handleDragStart"
           @dragend="handleDragEnd"
           @dragmove="handleDragMove"
@@ -56,6 +59,10 @@
     >
       <q-btn :disabled="moves.length < 1" @click="onUndoPressed" color="secondary" icon="undo" round size="1rem"/>
       <q-btn @click="onRestartPressed" color="secondary" icon="delete" round size="1rem"/>
+    </div>
+    <div class="flex row justify-around full-width controlButtons" v-else>
+      <q-btn @click="onRestartPressed" color="secondary">{{$t('button.playAgain')}}</q-btn>
+      <q-btn @click="onNextGamePressed" color="secondary">Next</q-btn>
     </div>
   </div>
 </template>
@@ -191,6 +198,15 @@ export default {
         const lastState = this.moves.splice(-1, 1)[0]
         this.game = lastState
         this.elementsToOperate = []
+      }
+    },
+    onNextGamePressed () {
+      this.saveGame()
+      const nextLevelIdentifier = MyStorage.getNextLevelIdentifier()
+      if (nextLevelIdentifier) {
+        this.$router.replace(`/game/${nextLevelIdentifier}`)
+      } else {
+        this.$q.notify(this.$t('message.noGameLeft'))
       }
     },
     trianglesMatch (placeholder, movedTriangle) {

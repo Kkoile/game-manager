@@ -5,6 +5,13 @@ const routes = [
     component: () => import('pages/Index.vue')
   },
   {
+    path: '/levels',
+    component: () => import('layouts/MyLayout.vue'),
+    children: [
+      { path: '', component: () => import('pages/Levels.vue') }
+    ]
+  },
+  {
     path: '/game/:identifier',
     component: () => import('pages/Game.vue')
   }
