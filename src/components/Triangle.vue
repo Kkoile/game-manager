@@ -127,12 +127,12 @@ export default {
       switch (this.direction) {
         case 'up':
           config.x = -this.length / 4
-          config.y = config.fontSize
+          config.y = 1 / 3 * config.fontSize
           config.rotation = -60
           break
         case 'down':
           config.x = -this.length / 4
-          config.y = 0
+          config.y = -1 / 3 * config.fontSize
           config.lineHeight = -1
           config.rotation = 120
           break
