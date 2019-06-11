@@ -50,8 +50,9 @@
         />
       </v-layer>
     </v-stage>
-    <div class="operationButtons" v-if="!won && elementsToOperate.length > 1">
+    <div class="flex row justify-around full-width operationButtons" v-if="!won && elementsToOperate.length > 0">
       <q-btn :disabled="elementsToOperate.length < 2" @click="addElements" color="primary" icon="add" round size="2rem"/>
+      <q-btn :disabled="elementsToOperate.length > 1" @click="rotateElements" color="primary" icon="cached" round size="2rem"/>
     </div>
     <div
       class="flex justify-around row controlButtons"
@@ -210,6 +211,9 @@ export default {
       }
     },
     trianglesMatch (placeholder, movedTriangle) {
+      if (placeholder.direction !== movedTriangle.direction) {
+        return false
+      }
       if (placeholder.valueHypotenuse && placeholder.valueHypotenuse !== movedTriangle.valueHypotenuse) {
         return false
       }
@@ -303,6 +307,27 @@ export default {
       }
       this.$set(this.game.missingElements, clickedTriangle.index, clickedTriangle)
       this.rerenderMissingTiles()
+    },
+    rotateElements () {
+      const currentState = this.getCurrentState()
+      this.elementsToOperate.forEach(triangle => {
+        if (triangle.direction === 'down') {
+          triangle.direction = 'up'
+        } else {
+          triangle.direction = 'down'
+        }
+        const oldTextHypotenuse = triangle.textHypotenuse
+        const oldValueHypotenuse = triangle.valueHypotenuse
+        triangle.textHypotenuse = triangle.textLeft
+        triangle.valueHypotenuse = triangle.valueLeft
+        triangle.textLeft = triangle.textRight
+        triangle.valueLeft = triangle.valueRight
+        triangle.textRight = oldTextHypotenuse
+        triangle.valueRight = oldValueHypotenuse
+
+        this.$set(this.missingElements, triangle.index, triangle)
+      })
+      this.moves.push(currentState)
     },
     addElements () {
       const currentState = this.getCurrentState()
