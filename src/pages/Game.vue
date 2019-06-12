@@ -50,6 +50,9 @@
         />
       </v-layer>
     </v-stage>
+    <div class="infoText" v-if="game.infoText && !won">
+      {{$t(game.infoText)}}
+    </div>
     <div class="flex row justify-around full-width operationButtons" v-if="!won && elementsToOperate.length > 0">
       <q-btn :disabled="elementsToOperate.length < 2" @click="addElements" color="primary" icon="add" round size="2rem"/>
       <q-btn :disabled="elementsToOperate.length > 1" @click="rotateElements" color="primary" icon="cached" round size="2rem"/>
@@ -351,7 +354,7 @@ export default {
       this.timeOutIdForApperance = setTimeout(() => {
         this.timeOutIdForApperance = null
         this.game.missingElements.push(newTriangle)
-      }, 800)
+      }, 500)
       this.elementsToOperate = []
       this.moves.push(currentState)
     },
@@ -383,4 +386,7 @@ export default {
     width 10rem
     position absolute
     bottom 2rem
+  .infoText
+    background yellow
+    text-align center
 </style>
