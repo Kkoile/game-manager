@@ -86,7 +86,10 @@ export default {
         object: this.object,
         fill: this.color,
         sceneFunc: (context, shape) => {
-          const offset = this.toggle ? 1 : 0
+          let offset = this.toggle ? 1 : 0
+          if (this.direction === 'up') {
+            offset = offset * -1
+          }
           context.beginPath()
           context.moveTo(-1 * (this.length / 2) + offset, this.height / 2 + offset)
           context.lineTo(offset, -this.height / 2 + offset)
