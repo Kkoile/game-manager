@@ -1,17 +1,20 @@
 {
-    "infoText": "introduction.readyToGo",
     "board": [
         [
             {
                 "filled": true,
-                "textHypotenuse": "√4",
-                "valueHypotenuse": 2
+                "textHypotenuse": "2",
+                "valueHypotenuse": 2,
+                "textRight": "1",
+                "valueRight": 1
             },
             {
-                "filled": true
+                "placeholder": true
             },
             {
                 "filled": true,
+                "textLeft": "√9",
+                "valueLeft": 3,
                 "textHypotenuse": "1",
                 "valueHypotenuse": 1
             }
@@ -37,19 +40,28 @@
             "direction": "down",
             "textHypotenuse": "0",
             "valueHypotenuse": 0,
-            "textRight": "0",
-            "valueRight": 0,
+            "textRight": "2",
+            "valueRight": 2,
+            "textLeft": "0",
+            "valueLeft": 0
+        },
+        {
+            "direction": "down",
+            "textHypotenuse": "0",
+            "valueHypotenuse": 0,
+            "textRight": "3",
+            "valueRight": 3,
             "textLeft": "2",
             "valueLeft": 2
         },
         {
             "direction": "down",
-            "textHypotenuse": "2",
-            "valueHypotenuse": 2,
-            "textRight": "0",
-            "valueRight": 0,
+            "textHypotenuse": "0",
+            "valueHypotenuse": 0,
             "textLeft": "3",
-            "valueLeft": 3
+            "valueLeft": 3,
+            "textRight": "0!",
+            "valueRight": 1
         },
         {
             "direction": "down",

@@ -2,30 +2,41 @@
     "infoText":  "introduction.valueDifferentFromText",
     "board": [
         [
+          {
+            "filled": true
+          },
+          {
+            "filled": true
+          },
+          {
+            "filled": true
+          }
+        ],
+        [
             {
                 "filled": true,
-                "textRight": "1",
-                "valueRight": 1
+                "textLeft": "1",
+                "valueLeft": 1
             },
             {
                 "placeholder": true
             },
             {
                 "filled": true,
-                "textLeft": "2",
-                "valueLeft": 2
+                "textRight": "√4",
+                "valueRight": 2
             }
         ]
     ],
     "missingElements": [
         {
-            "direction": "down",
+            "direction": "up",
             "textHypotenuse": "0",
             "valueHypotenuse": 0,
-            "textRight": "1",
-            "valueRight": 1,
-            "textLeft": "√4",
-            "valueLeft": 2
+            "textLeft": "1",
+            "valueLeft": 1,
+            "textRight": "2",
+            "valueRight": 2
         }
     ]
 }

@@ -3,23 +3,34 @@
     "board": [
         [
             {
+                "filled": true
+            },
+            {
+                "filled": true
+            },
+            {
+                "filled": true
+            }
+        ],
+        [
+            {
                 "filled": true,
-                "textRight": "1",
-                "valueRight": 1
+                "textLeft": "3",
+                "valueLeft": 3
             },
             {
                 "placeholder": true
             },
             {
                 "filled": true,
-                "textLeft": "3",
-                "valueLeft": 3
+                "textRight": "1",
+                "valueRight": 1
             }
         ]
     ],
     "missingElements": [
         {
-            "direction": "down",
+            "direction": "up",
             "textHypotenuse": "0",
             "valueHypotenuse": 0,
             "textRight": "1",
