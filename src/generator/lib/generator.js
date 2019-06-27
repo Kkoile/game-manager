@@ -7,7 +7,8 @@ const OPERATIONS = [
     fn: value => {
       return value;
     },
-    allowedValues: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+    allowedValues: "all",
+    isAllowedToHaveSameOperationAsNeighbour: true
   },
   {
     symbol: value => {
@@ -62,9 +63,14 @@ function _getDirectionOfElement(rowIndex, columnIndex) {
   return ((rowIndex % 2) + (columnIndex % 2)) % 2 === 0 ? "up" : "down";
 }
 
-function _getOperation(value) {
+function _getOperation(value, neighbourOperation) {
   const possibleOperations = OPERATIONS.filter(operation => {
-    return operation.allowedValues.includes(value);
+    return (
+      (operation.allowedValues === "all" ||
+        operation.allowedValues.includes(value)) &&
+      (operation !== neighbourOperation ||
+        operation.isAllowedToHaveSameOperationAsNeighbour)
+    );
   });
   if (!possibleOperations || possibleOperations.length === 0) {
     throw new Error(`Value '${value}' not supported`);

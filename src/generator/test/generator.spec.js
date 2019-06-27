@@ -166,8 +166,25 @@ test("_getOperation should return other random operation", async () => {
   );
 });
 
-test("_getOperation should throw an error if value is not supported", async () => {
-  expect(() => generatorSpec._getOperation(10)).toThrow();
+test("_getOperation should not return the same operation as given", async () => {
+  random.int.mockReturnValueOnce(1);
+  expect(
+    generatorSpec._getOperation(1, generatorSpec.OPERATIONS[1])
+  ).toStrictEqual(generatorSpec.OPERATIONS[2]);
+});
+
+test("_getOperation should return the same operation as given if it is allowed", async () => {
+  random.int.mockReturnValueOnce(0);
+  expect(
+    generatorSpec._getOperation(1, generatorSpec.OPERATIONS[0])
+  ).toStrictEqual(generatorSpec.OPERATIONS[0]);
+});
+
+test("_getOperation should return same value for a ridiculous high number", async () => {
+  random.int.mockReturnValueOnce(0);
+  expect(generatorSpec._getOperation(10000)).toStrictEqual(
+    generatorSpec.OPERATIONS[0]
+  );
 });
 
 test("_createValueOnSide should create left side also on neighbour with direction up", async () => {
