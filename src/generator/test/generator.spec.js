@@ -3,8 +3,16 @@ const random = require("random");
 
 const generatorSpec = require("../lib/generator");
 
+beforeEach(() => {
+  random.int.mockReset();
+  random.float.mockReset();
+  random.boolean.mockReset();
+});
+
 test("resulting level should have board attribute", async () => {
   random.int.mockReturnValue(1);
+  random.boolean.mockReturnValue(false);
+  random.float.mockReturnValue(0.1);
   const level = await generatorSpec.generateLevel(1);
   expect(level.board).toBeDefined();
   expect(Array.isArray(level.board)).toBeTruthy();
@@ -12,6 +20,8 @@ test("resulting level should have board attribute", async () => {
 
 test("board should have at least one element", async () => {
   random.int.mockReturnValue(1);
+  random.boolean.mockReturnValue(false);
+  random.float.mockReturnValue(0.1);
   const level = await generatorSpec.generateLevel(1);
   expect(level.board.length).toBeGreaterThan(0);
   expect(level.board[0].length).toBeGreaterThan(0);
@@ -19,6 +29,8 @@ test("board should have at least one element", async () => {
 
 test("resulting level should have missingElements attribute", async () => {
   random.int.mockReturnValue(1);
+  random.boolean.mockReturnValue(false);
+  random.float.mockReturnValue(0.1);
   const level = await generatorSpec.generateLevel(1);
   expect(level.missingElements).toBeDefined();
   expect(Array.isArray(level.missingElements)).toBeTruthy();
@@ -26,12 +38,16 @@ test("resulting level should have missingElements attribute", async () => {
 
 test("missingElements should contain at least one element", async () => {
   random.int.mockReturnValue(1);
+  random.boolean.mockReturnValue(false);
+  random.float.mockReturnValue(0.1);
   const level = await generatorSpec.generateLevel(1);
   expect(level.missingElements.length).toBeGreaterThan(0);
 });
 
 test("missingElement should have required attributes", async () => {
   random.int.mockReturnValue(1);
+  random.boolean.mockReturnValue(false);
+  random.float.mockReturnValue(0.1);
   const level = await generatorSpec.generateLevel(1);
   const missingElement = level.missingElements[0];
   expect(missingElement).toHaveProperty("direction");
@@ -114,6 +130,11 @@ test("_createMissingElements should create one missing element", async () => {
     missingElements: []
   };
   random.int.mockReturnValue(1);
+
+  random.int.mockReturnValue(0);
+
+  random.float.mockReturnValue(0.1);
+
   await generatorSpec._createMissingElements(level, 1);
   expect(level.missingElements.length).toBe(1);
 });
@@ -129,20 +150,227 @@ test("_createMissingElements should create two missing element", async () => {
   random.int.mockReturnValueOnce(0);
   random.int.mockReturnValueOnce(1);
   random.int.mockReturnValueOnce(1);
+  random.int.mockReturnValueOnce(0);
+  random.int.mockReturnValueOnce(0);
   random.int.mockReturnValueOnce(1);
+  random.int.mockReturnValueOnce(0);
+  random.int.mockReturnValueOnce(0);
   random.int.mockReturnValueOnce(1);
-  random.int.mockReturnValueOnce(1);
-  random.int.mockReturnValueOnce(1);
+  random.int.mockReturnValueOnce(0);
 
   random.int.mockReturnValueOnce(1);
   random.int.mockReturnValueOnce(1);
   random.int.mockReturnValueOnce(1);
+  random.int.mockReturnValueOnce(0);
+  random.int.mockReturnValueOnce(0);
   random.int.mockReturnValueOnce(1);
+  random.int.mockReturnValueOnce(0);
+  random.int.mockReturnValueOnce(0);
   random.int.mockReturnValueOnce(1);
-  random.int.mockReturnValueOnce(1);
-  random.int.mockReturnValueOnce(1);
+  random.int.mockReturnValueOnce(0);
+
+  random.float.mockReturnValueOnce(0.1);
+
   await generatorSpec._createMissingElements(level, 2);
   expect(level.missingElements.length).toBe(2);
+});
+
+test("_createMissingElements should rotate an element", async () => {
+  const level = {
+    board: [
+      [{ filled: true }, { filled: true }, { filled: true }],
+      [{ filled: true }, { filled: true }, { filled: true }]
+    ],
+    missingElements: []
+  };
+  random.int.mockReturnValueOnce(0);
+  random.int.mockReturnValueOnce(1);
+  random.int.mockReturnValueOnce(1);
+  random.int.mockReturnValueOnce(0);
+  random.int.mockReturnValueOnce(0);
+  random.int.mockReturnValueOnce(2);
+  random.int.mockReturnValueOnce(0);
+  random.int.mockReturnValueOnce(0);
+  random.int.mockReturnValueOnce(3);
+  random.int.mockReturnValueOnce(0);
+
+  random.float.mockReturnValueOnce(0.7);
+  random.boolean.mockReturnValueOnce(true);
+  random.int.mockReturnValueOnce(1);
+  random.float.mockReturnValueOnce(0.7);
+
+  await generatorSpec._createMissingElements(level, 1);
+  expect(level.missingElements.length).toBe(1);
+  expect(level.missingElements[0].direction).toBe("up");
+  expect(level.missingElements[0].valueLeft).toBe(2);
+  expect(level.missingElements[0].valueRight).toBe(3);
+  expect(level.missingElements[0].valueHypotenuse).toBe(1);
+});
+
+test("_createMissingElements should split up an element", async () => {
+  const level = {
+    board: [
+      [{ filled: true }, { filled: true }, { filled: true }],
+      [{ filled: true }, { filled: true }, { filled: true }]
+    ],
+    missingElements: []
+  };
+  random.int.mockReturnValueOnce(0);
+  random.int.mockReturnValueOnce(1);
+  random.int.mockReturnValueOnce(1);
+  random.int.mockReturnValueOnce(0);
+  random.int.mockReturnValueOnce(0);
+  random.int.mockReturnValueOnce(2);
+  random.int.mockReturnValueOnce(0);
+  random.int.mockReturnValueOnce(0);
+  random.int.mockReturnValueOnce(3);
+  random.int.mockReturnValueOnce(0);
+
+  random.float.mockReturnValueOnce(0.7);
+  random.boolean.mockReturnValueOnce(false);
+  random.int.mockReturnValueOnce(0);
+  random.int.mockReturnValueOnce(0);
+  random.int.mockReturnValueOnce(0);
+  random.int.mockReturnValueOnce(1);
+  random.int.mockReturnValueOnce(0);
+  random.int.mockReturnValueOnce(0);
+  random.int.mockReturnValueOnce(1);
+  random.int.mockReturnValueOnce(0);
+  random.int.mockReturnValueOnce(0);
+
+  await generatorSpec._createMissingElements(level, 1);
+  expect(level.missingElements.length).toBe(2);
+  expect(level.missingElements[0].direction).toBe("down");
+  expect(level.missingElements[0].valueLeft).toBe(0);
+  expect(level.missingElements[0].valueRight).toBe(1);
+  expect(level.missingElements[0].valueHypotenuse).toBe(1);
+  expect(level.missingElements[1].direction).toBe("down");
+  expect(level.missingElements[1].valueLeft).toBe(1);
+  expect(level.missingElements[1].valueRight).toBe(1);
+  expect(level.missingElements[1].valueHypotenuse).toBe(2);
+});
+
+test("_scrambleElements should scramble for a certain probability", async () => {
+  const element = {
+    direction: "down",
+    valueLeft: 1,
+    textLeft: "1",
+    valueRight: 2,
+    textRight: "2",
+    valueHypotenuse: 3,
+    textHypotenuse: "3"
+  };
+  random.float.mockReturnValueOnce(0.7);
+  random.boolean.mockReturnValueOnce(true);
+  random.float.mockReturnValueOnce(0.5);
+
+  const newElements = generatorSpec._scrambleElements([element]);
+  expect(newElements.length).toBe(1);
+  expect(newElements[0].direction).toBe("up");
+  expect(newElements[0].valueLeft).toBe(2);
+  expect(newElements[0].valueRight).toBe(3);
+  expect(newElements[0].valueHypotenuse).toBe(1);
+});
+
+test("_scrambleElements should first rotate then split", async () => {
+  const element = {
+    direction: "down",
+    valueLeft: 1,
+    textLeft: "1",
+    valueRight: 2,
+    textRight: "2",
+    valueHypotenuse: 3,
+    textHypotenuse: "3"
+  };
+  random.float.mockReturnValueOnce(0.7);
+  random.boolean.mockReturnValueOnce(true);
+  random.float.mockReturnValueOnce(0.8);
+  random.boolean.mockReturnValueOnce(false);
+  random.int.mockReturnValueOnce(2);
+  random.int.mockReturnValueOnce(0);
+  random.int.mockReturnValueOnce(0);
+  random.int.mockReturnValueOnce(3);
+  random.int.mockReturnValueOnce(0);
+  random.int.mockReturnValueOnce(0);
+  random.int.mockReturnValueOnce(1);
+  random.int.mockReturnValueOnce(0);
+  random.int.mockReturnValueOnce(0);
+  random.float.mockReturnValueOnce(0.8);
+
+  const newElements = generatorSpec._scrambleElements([element]);
+  expect(newElements.length).toBe(2);
+  expect(newElements[0].direction).toBe("up");
+  expect(newElements[0].valueLeft).toBe(2);
+  expect(newElements[0].valueRight).toBe(3);
+  expect(newElements[0].valueHypotenuse).toBe(1);
+});
+
+test("_splitUpElement should split elements", async () => {
+  const element = {
+    direction: "down",
+    valueLeft: 1,
+    textLeft: "1",
+    valueRight: 2,
+    textRight: "2",
+    valueHypotenuse: 3,
+    textHypotenuse: "3"
+  };
+
+  random.int.mockReturnValueOnce(1);
+  random.int.mockReturnValueOnce(0);
+  random.int.mockReturnValueOnce(0);
+  random.int.mockReturnValueOnce(1);
+  random.int.mockReturnValueOnce(0);
+  random.int.mockReturnValueOnce(0);
+  random.int.mockReturnValueOnce(2);
+  random.int.mockReturnValueOnce(1);
+  random.int.mockReturnValueOnce(0);
+
+  const newElements = generatorSpec._splitUpElement(element);
+  expect(newElements.length).toBe(2);
+  expect(newElements[0].direction).toBe("down");
+  expect(newElements[0].valueLeft).toBe(1);
+  expect(newElements[0].valueRight).toBe(1);
+  expect(newElements[0].valueHypotenuse).toBe(2);
+  expect(newElements[0].textHypotenuse).toBe("√4");
+  expect(newElements[1].direction).toBe("down");
+  expect(newElements[1].valueLeft).toBe(0);
+  expect(newElements[1].valueRight).toBe(1);
+  expect(newElements[1].valueHypotenuse).toBe(1);
+});
+
+test("_rotateElement should rotate one clockwise", async () => {
+  const element = {
+    direction: "down",
+    valueLeft: 1,
+    textLeft: "1",
+    valueRight: 2,
+    textRight: "2",
+    valueHypotenuse: 3,
+    textHypotenuse: "3"
+  };
+  generatorSpec._rotateElement(element);
+  expect(element.direction).toBe("up");
+  expect(element.valueLeft).toBe(2);
+  expect(element.valueRight).toBe(3);
+  expect(element.valueHypotenuse).toBe(1);
+});
+
+test("_rotateElement should rotate two clockwise", async () => {
+  const element = {
+    direction: "up",
+    valueLeft: 1,
+    textLeft: "1",
+    valueRight: 2,
+    textRight: "2",
+    valueHypotenuse: 3,
+    textHypotenuse: "3"
+  };
+  generatorSpec._rotateElement(element);
+  expect(element.direction).toBe("down");
+  expect(element.valueLeft).toBe(2);
+  expect(element.valueRight).toBe(3);
+  expect(element.valueHypotenuse).toBe(1);
 });
 
 test("_getDirectionOfElement should work", async () => {

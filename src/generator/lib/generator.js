@@ -130,6 +130,60 @@ function _createValueOnSide(
   }
 }
 
+function _rotateElement(element) {
+  if (element.direction === "down") {
+    element.direction = "up";
+  } else {
+    element.direction = "down";
+  }
+  const oldTextHypotenuse = element.textHypotenuse;
+  const oldValueHypotenuse = element.valueHypotenuse;
+  element.textHypotenuse = element.textLeft;
+  element.valueHypotenuse = element.valueLeft;
+  element.textLeft = element.textRight;
+  element.valueLeft = element.valueRight;
+  element.textRight = oldTextHypotenuse;
+  element.valueRight = oldValueHypotenuse;
+}
+
+function _splitUpElement(element) {
+  const newElement = { direction: element.direction };
+  ["Left", "Right", "Hypotenuse"].forEach(side => {
+    const oldValue = element[`value${side}`];
+    const newValue = random.int(0, oldValue);
+    element[`value${side}`] = newValue;
+    element[`text${side}`] = _getOperation(newValue).symbol(newValue);
+    newElement[`value${side}`] = oldValue - newValue;
+    newElement[`text${side}`] = _getOperation(oldValue - newValue).symbol(
+      oldValue - newValue
+    );
+  });
+  return [element, newElement];
+}
+
+function _scrambleElements(elements, density = 1) {
+  let newElements = [];
+  elements.forEach(element => {
+    newElements = newElements.concat(_scrambleElement(element, density));
+  });
+  return newElements;
+}
+
+function _scrambleElement(element, density) {
+  const randomNumber = random.float(0, 1);
+  if (density < 10 && randomNumber > 1 - Math.pow(0.5, density)) {
+    let elements = [];
+    if (random.boolean()) {
+      _rotateElement(element);
+      elements.push(element);
+    } else {
+      elements = _splitUpElement(element);
+    }
+    return _scrambleElements(elements, density + 1);
+  }
+  return [element];
+}
+
 async function _createMissingElements(level, numberOfPlaceholder) {
   for (var i = 0; i < numberOfPlaceholder; i++) {
     const { rowIndex, columnIndex } = _getRandomFreeTriangle(level);
@@ -148,6 +202,7 @@ async function _createMissingElements(level, numberOfPlaceholder) {
     level.board[rowIndex][columnIndex] = { placeholder: true };
     level.missingElements.push(missingElement);
   }
+  level.missingElements = _scrambleElements(level.missingElements);
 }
 
 async function generateLevel(numberOfPlaceholder) {
@@ -165,5 +220,8 @@ module.exports = {
   _getDirectionOfElement,
   _getOperation,
   _createValueOnSide,
+  _scrambleElements,
+  _rotateElement,
+  _splitUpElement,
   OPERATIONS
 };
