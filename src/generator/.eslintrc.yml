@@ -1,0 +1,22 @@
+---
+root: true
+#  https://eslint.org/docs/rules/
+env:
+  node: true
+  jest/globals: true
+parserOptions:
+  ecmaVersion: 8
+plugins:
+  - prettier
+  - jest
+extends:
+  - 'eslint:recommended'
+  - 'plugin:prettier/recommended'
+  - 'plugin:jest/recommended'
+rules:
+  no-console:
+    - off
+  no-unused-vars:
+    - off
+  max-len:
+    - off
