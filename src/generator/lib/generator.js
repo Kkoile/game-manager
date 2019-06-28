@@ -54,7 +54,7 @@ function _getRandomFreeTriangle(level) {
   const rowIndex = random.int(0, level.board.length - 1);
   const columnIndex = random.int(0, level.board[rowIndex].length - 1);
   if (level.board[rowIndex][columnIndex].placeholder) {
-    return _getRandomFreeTriangle(level);
+    return exportFunctions._getRandomFreeTriangle(level);
   }
   return { rowIndex, columnIndex };
 }
@@ -94,7 +94,8 @@ function _createValueOnSide(
     value = random.int(0, 9);
   }
   missingElement[`value${side}`] = value;
-  missingElement[`text${side}`] = text || _getOperation(value).symbol(value);
+  missingElement[`text${side}`] =
+    text || exportFunctions._getOperation(value).symbol(value);
 
   if (!text) {
     let rowIndexNeighbour = rowIndex;
@@ -124,7 +125,7 @@ function _createValueOnSide(
     ) {
       board[rowIndexNeighbour][columnIndexNeighbour][
         `text${side}`
-      ] = _getOperation(value).symbol(value);
+      ] = exportFunctions._getOperation(value).symbol(value);
       board[rowIndexNeighbour][columnIndexNeighbour][`value${side}`] = value;
     }
   }
@@ -152,11 +153,13 @@ function _splitUpElement(element) {
     const oldValue = element[`value${side}`];
     const newValue = random.int(0, oldValue);
     element[`value${side}`] = newValue;
-    element[`text${side}`] = _getOperation(newValue).symbol(newValue);
+    element[`text${side}`] = exportFunctions
+      ._getOperation(newValue)
+      .symbol(newValue);
     newElement[`value${side}`] = oldValue - newValue;
-    newElement[`text${side}`] = _getOperation(oldValue - newValue).symbol(
-      oldValue - newValue
-    );
+    newElement[`text${side}`] = exportFunctions
+      ._getOperation(oldValue - newValue)
+      .symbol(oldValue - newValue);
   });
   return [element, newElement];
 }
@@ -174,24 +177,26 @@ function _scrambleElement(element, density) {
   if (density < 10 && randomNumber > 1 - Math.pow(0.5, density)) {
     let elements = [];
     if (random.boolean()) {
-      _rotateElement(element);
+      exportFunctions._rotateElement(element);
       elements.push(element);
     } else {
-      elements = _splitUpElement(element);
+      elements = exportFunctions._splitUpElement(element);
     }
-    return _scrambleElements(elements, density + 1);
+    return exportFunctions._scrambleElements(elements, density + 1);
   }
   return [element];
 }
 
 async function _createMissingElements(level, numberOfPlaceholder) {
   for (var i = 0; i < numberOfPlaceholder; i++) {
-    const { rowIndex, columnIndex } = _getRandomFreeTriangle(level);
+    const { rowIndex, columnIndex } = exportFunctions._getRandomFreeTriangle(
+      level
+    );
     const missingElement = {
-      direction: _getDirectionOfElement(rowIndex, columnIndex)
+      direction: exportFunctions._getDirectionOfElement(rowIndex, columnIndex)
     };
     ["Left", "Right", "Hypotenuse"].forEach(side => {
-      _createValueOnSide(
+      exportFunctions._createValueOnSide(
         level.board,
         missingElement,
         rowIndex,
@@ -202,17 +207,19 @@ async function _createMissingElements(level, numberOfPlaceholder) {
     level.board[rowIndex][columnIndex] = { placeholder: true };
     level.missingElements.push(missingElement);
   }
-  level.missingElements = _scrambleElements(level.missingElements);
+  level.missingElements = exportFunctions._scrambleElements(
+    level.missingElements
+  );
 }
 
 async function generateLevel(numberOfPlaceholder) {
   const level = { board: [], missingElements: [] };
-  level.board = await _createBoard(2, 3);
-  await _createMissingElements(level, numberOfPlaceholder);
+  level.board = await exportFunctions._createBoard(2, 3);
+  await exportFunctions._createMissingElements(level, numberOfPlaceholder);
   return level;
 }
 
-module.exports = {
+const exportFunctions = {
   generateLevel,
   _createBoard,
   _getRandomFreeTriangle,
@@ -225,3 +232,5 @@ module.exports = {
   _splitUpElement,
   OPERATIONS
 };
+
+module.exports = exportFunctions;
