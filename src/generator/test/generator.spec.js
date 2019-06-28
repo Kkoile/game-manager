@@ -228,6 +228,8 @@ test("_scrambleElements should first rotate then split", async () => {
 
   const newElements = generatorSpec._scrambleElements([element]);
   expect(newElements.length).toBe(2);
+  expect(_rotateElementSpy).toHaveBeenCalledTimes(1);
+  expect(_splitUpElementSpy).toHaveBeenCalledTimes(1);
 });
 
 test("_splitUpElement should split elements", async () => {
