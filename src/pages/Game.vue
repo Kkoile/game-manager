@@ -118,28 +118,19 @@ export default {
       const offset = (this.$q.screen.width - this.triangleLength * (this.game.board[0].length - 1)) / 2
       return this.game.board.map((row, rowIndex) => {
         return row.map((triangle, columnIndex) => {
-          if (triangle.placeholder) {
-            triangle.color = 'lightgrey'
-            if (columnIndex > 0 && row[columnIndex - 1].valueRight) {
-              triangle.valueRight = row[columnIndex - 1].valueRight
-            }
-            if (columnIndex < row.length - 1 && row[columnIndex + 1].valueLeft) {
-              triangle.valueLeft = row[columnIndex + 1].valueLeft
-            }
-            if (rowIndex > 0) {
-              const previousRow = this.game.board[rowIndex - 1]
-              if (columnIndex < previousRow.length && previousRow[columnIndex].valueHypotenuse) {
-                triangle.valueHypotenuse = previousRow[columnIndex].valueHypotenuse
-              }
-            }
-          } else {
-            triangle.color = this.colors[colorIndex++]
-          }
           triangle.positionX = offset + columnIndex * this.triangleLength / 2
           triangle.positionY = rowIndex * ((Math.sqrt(3) / 2) * this.triangleLength)
           triangle.rowIndex = rowIndex
           triangle.columnIndex = columnIndex
           triangle.direction = (rowIndex % 2 + columnIndex % 2) % 2 === 0 ? 'up' : 'down'
+          if (triangle.placeholder) {
+            triangle.color = 'lightgrey'
+            triangle.valueLeft = this.getValueOfNeighbour(triangle, rowIndex, columnIndex, 'Left')
+            triangle.valueRight = this.getValueOfNeighbour(triangle, rowIndex, columnIndex, 'Right')
+            triangle.valueHypotenuse = this.getValueOfNeighbour(triangle, rowIndex, columnIndex, 'Hypotenuse')
+          } else {
+            triangle.color = this.colors[colorIndex++]
+          }
           return triangle
         })
       })
@@ -212,6 +203,36 @@ export default {
       } else {
         this.$q.notify(this.$t('message.noGameLeft'))
       }
+    },
+    getValueOfNeighbour (triangle, rowIndex, columnIndex, side) {
+      let rowIndexNeighbour = rowIndex
+      let columnIndexNeighbour = columnIndex
+      if (triangle.direction === 'up') {
+        if (side === 'Left') {
+          columnIndexNeighbour = columnIndex - 1
+        } else if (side === 'Right') {
+          columnIndexNeighbour = columnIndex + 1
+        } else if (side === 'Hypotenuse') {
+          rowIndexNeighbour = rowIndex + 1
+        }
+      } else {
+        if (side === 'Left') {
+          columnIndexNeighbour = columnIndex + 1
+        } else if (side === 'Right') {
+          columnIndexNeighbour = columnIndex - 1
+        } else if (side === 'Hypotenuse') {
+          rowIndexNeighbour = rowIndex - 1
+        }
+      }
+      if (
+        rowIndexNeighbour >= 0 &&
+        rowIndexNeighbour < this.game.board.length &&
+        columnIndexNeighbour >= 0 &&
+        columnIndexNeighbour < this.game.board[rowIndexNeighbour].length
+      ) {
+        return this.game.board[rowIndexNeighbour][columnIndexNeighbour][`value${side}`]
+      }
+      return undefined
     },
     trianglesMatch (placeholder, movedTriangle) {
       if (placeholder.direction !== movedTriangle.direction) {
