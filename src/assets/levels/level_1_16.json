@@ -1,0 +1,52 @@
+{
+  "board": [
+    [
+      {
+        "filled": true
+      },
+      {
+        "filled": true
+      },
+      {
+        "filled": true,
+        "textHypotenuse": "8",
+        "valueHypotenuse": 8
+      }
+    ],
+    [
+      {
+        "filled": true,
+        "textLeft": "7",
+        "valueLeft": 7
+      },
+      {
+        "placeholder": true,
+        "textRight": "8",
+        "valueRight": 8
+      },
+      {
+        "placeholder": true
+      }
+    ]
+  ],
+  "missingElements": [
+    {
+      "direction": "down",
+      "valueLeft": 0,
+      "textLeft": "0",
+      "valueRight": 2,
+      "textRight": "2",
+      "valueHypotenuse": 7,
+      "textHypotenuse": "7"
+    },
+    {
+      "direction": "up",
+      "valueLeft": 8,
+      "textLeft": "8",
+      "valueRight": 8,
+      "textRight": "8",
+      "valueHypotenuse": 5,
+      "textHypotenuse": "5"
+    }
+  ]
+}

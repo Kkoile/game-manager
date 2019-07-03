@@ -1,0 +1,54 @@
+{
+  "board": [
+    [
+      {
+        "filled": true,
+        "textHypotenuse": "6",
+        "valueHypotenuse": 6
+      },
+      {
+        "filled": true,
+        "textLeft": "6",
+        "valueLeft": 6
+      },
+      {
+        "placeholder": true
+      }
+    ],
+    [
+      {
+        "placeholder": true
+      },
+      {
+        "filled": true,
+        "textLeft": "2",
+        "valueLeft": 2
+      },
+      {
+        "filled": true,
+        "textHypotenuse": "1",
+        "valueHypotenuse": 1
+      }
+    ]
+  ],
+  "missingElements": [
+    {
+      "direction": "up",
+      "valueLeft": 6,
+      "textLeft": "6",
+      "valueRight": 5,
+      "textRight": "5",
+      "valueHypotenuse": 1,
+      "textHypotenuse": "1"
+    },
+    {
+      "direction": "up",
+      "valueLeft": 1,
+      "textLeft": "√1",
+      "valueRight": 6,
+      "textRight": "6",
+      "valueHypotenuse": 2,
+      "textHypotenuse": "2"
+    }
+  ]
+}
