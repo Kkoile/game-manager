@@ -90,6 +90,8 @@ function _createValueOnSide(
   if (board[rowIndex][columnIndex][`value${side}`]) {
     value = board[rowIndex][columnIndex][`value${side}`];
     text = board[rowIndex][columnIndex][`text${side}`];
+    delete board[rowIndex][columnIndex][`value${side}`];
+    delete board[rowIndex][columnIndex][`text${side}`];
   } else {
     value = random.int(0, 9);
   }

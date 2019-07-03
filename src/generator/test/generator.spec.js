@@ -476,4 +476,6 @@ test("_createValueOnSide should respect already created element", async () => {
   expect(missingElement.valueHypotenuse).toBe(1);
   expect(missingElement.textHypotenuse).toBe("1");
   expect(board[0][0].valueHypotenuse).not.toBeDefined();
+  expect(board[1][0].valueHypotenuse).not.toBeDefined();
+  expect(board[1][0].textHypotenuse).not.toBeDefined();
 });
