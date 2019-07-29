@@ -54,7 +54,7 @@
       {{$t(game.infoText)}}
     </div>
     <div class="flex row justify-around full-width operationButtons" v-if="!won && elementsToOperate.length > 0">
-      <q-btn :disabled="elementsToOperate.length < 2" @click="addElements" color="primary" icon="add" round size="2rem"/>
+      <q-btn :disabled="!elementsToOperateCanBeAdded" @click="addElements" color="primary" icon="add" round size="2rem"/>
       <q-btn :disabled="elementsToOperate.length > 1" @click="rotateElements" color="primary" icon="cached" round size="2rem"/>
     </div>
     <div
@@ -107,6 +107,13 @@ export default {
     this.saveGame()
   },
   computed: {
+    elementsToOperateCanBeAdded () {
+      if (this.elementsToOperate.length < 2) {
+        return false
+      }
+      const direction = this.elementsToOperate[0].direction
+      return this.elementsToOperate.every(element => element.direction === direction)
+    },
     triangleLength () {
       return this.$q.screen.width / this.game.board[0].length
     },
