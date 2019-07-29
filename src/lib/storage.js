@@ -8,6 +8,9 @@ export default {
       payload.moves = moves
     }
     payload.board = board
+    missingElements.forEach(element => {
+      element.selected = false
+    })
     payload.missingElements = missingElements
     LocalStorage.set(identifier, payload)
   },
