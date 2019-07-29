@@ -4,7 +4,9 @@ export default {
   saveGame: (identifier, won, board, missingElements, moves) => {
     const payload = {}
     payload.won = won
-    payload.moves = moves
+    if (!won) {
+      payload.moves = moves
+    }
     payload.board = board
     payload.missingElements = missingElements
     LocalStorage.set(identifier, payload)

@@ -262,6 +262,7 @@ export default {
     },
     getCurrentState () {
       const currentState = JSON.parse(JSON.stringify(this.game))
+      delete currentState.moves
       currentState.missingElements.forEach((triangle) => {
         triangle.selected = false
         triangle.toggle = undefined
