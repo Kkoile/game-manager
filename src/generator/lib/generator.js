@@ -1,32 +1,76 @@
 const random = require("random");
+const PRIME_NUMBERS = require("../resources/primeNumbers");
+
 const OPERATIONS = [
   {
     symbol: value => {
       return `${value}`;
     },
-    fn: value => {
-      return value;
+    isAllowedValue: value => {
+      return true;
     },
-    allowedValues: "all",
     isAllowedToHaveSameOperationAsNeighbour: true
   },
   {
     symbol: value => {
       return `√${Math.pow(value, 2)}`;
     },
-    fn: value => {
-      return Math.sqrt(value);
-    },
-    allowedValues: [1, 2, 3]
+    isAllowedValue: value => {
+      return value > 0;
+    }
   },
   {
     symbol: value => {
       return `${Math.sqrt(value)}²`;
     },
-    fn: value => {
-      return Math.pow(value, 2);
+    isAllowedValue: value => {
+      return value > 0 && Math.sqrt(value) % 1 === 0;
+    }
+  },
+  {
+    symbol: value => {
+      const firstValue = random.int(1, value - 1);
+      const secondValue = value - firstValue;
+      return `${firstValue} + ${secondValue}`;
     },
-    allowedValues: [1, 4, 9]
+    isAllowedValue: value => {
+      return value > 1;
+    }
+  },
+  {
+    symbol: value => {
+      const firstValue = random.int(value + 1, value * 3);
+      const secondValue = firstValue - value;
+      return `${firstValue} - ${secondValue}`;
+    },
+    isAllowedValue: value => {
+      return value > 0;
+    }
+  },
+  {
+    symbol: value => {
+      const divider = random.int(2, 9);
+      const firstValue = divider * value;
+      return `${firstValue} / ${divider}`;
+    },
+    isAllowedValue: value => {
+      return value > 1;
+    }
+  },
+  {
+    symbol: value => {
+      const divisors = [];
+      for (let i = 2; i <= value / 2; i++) {
+        if ((value / i) % 1 === 0) {
+          divisors.push(i);
+        }
+      }
+      const firstValue = divisors[random.int(0, divisors.length - 1)];
+      return `${firstValue} * ${value / firstValue}`;
+    },
+    isAllowedValue: value => {
+      return value > 2 && !PRIME_NUMBERS[value];
+    }
   }
 ];
 
@@ -66,8 +110,7 @@ function _getDirectionOfElement(rowIndex, columnIndex) {
 function _getOperation(value, neighbourOperation) {
   const possibleOperations = OPERATIONS.filter(operation => {
     return (
-      (operation.allowedValues === "all" ||
-        operation.allowedValues.includes(value)) &&
+      operation.isAllowedValue(value) &&
       (operation !== neighbourOperation ||
         operation.isAllowedToHaveSameOperationAsNeighbour)
     );
