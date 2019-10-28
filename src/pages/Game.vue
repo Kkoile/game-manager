@@ -4,7 +4,7 @@
     <div class="flex flex-center" v-if="won">
       <h2 align="center">{{$t('message.solved')}}</h2>
     </div>
-    <v-stage :config="{width: $q.screen.width, height: $q.screen.height - 200}" ref="stage">
+    <v-stage :config="{y: 20, width: $q.screen.width, height: $q.screen.height - 200}" ref="stage">
       <v-layer ref="layer">
         <div class="flex row" :key="`board-row-${i}`" v-for="(row, i) in board">
           <div :key="`board-row-${i}-column-${j}`" v-for="(triangle, j) in row">
@@ -18,7 +18,7 @@
               :text-left="triangle.textLeft"
               :text-right="triangle.textRight"
               :color="triangle.color"
-              strokeColor="#B5EAD7"
+              strokeColor="gold"
               :hovered="hoveredElement === triangle"
             />
           </div>
@@ -41,8 +41,8 @@
           :toggle="triangle.toggle"
           :hovered="triangle.selected"
           :visible="!triangle.combined"
-          color="#FF9AA2"
-          strokeColor="#B5EAD7"
+          color="#dcffcc"
+          strokeColor="gold"
           @dragstart="handleDragStart"
           @dragend="handleDragEnd"
           @dragmove="handleDragMove"
@@ -84,11 +84,10 @@ export default {
       hoveredElement: null,
       elementsToOperate: [],
       colors: [
-        'green',
-        'blue',
-        'brown',
-        'yellow',
-        'pink'
+        '#c2e8ce',
+        '#f2eee5',
+        '#f6ad7b',
+        '#ea9d9d'
       ],
       game: {},
       won: false,
@@ -115,7 +114,7 @@ export default {
       return this.elementsToOperate.every(element => element.direction === direction)
     },
     triangleLength () {
-      return this.$q.screen.width / this.game.board[0].length
+      return this.$q.screen.width / this.game.board[0].length - 7
     },
     triangleHeight () {
       return Math.sqrt(3) / 2 * this.triangleLength
@@ -136,7 +135,7 @@ export default {
             triangle.valueRight = this.getValueOfNeighbour(triangle, rowIndex, columnIndex, 'Right')
             triangle.valueHypotenuse = this.getValueOfNeighbour(triangle, rowIndex, columnIndex, 'Hypotenuse')
           } else {
-            triangle.color = this.colors[colorIndex++]
+            triangle.color = this.colors[colorIndex++ % this.colors.length]
           }
           return triangle
         })
@@ -159,7 +158,7 @@ export default {
           indexColumn = 0
           indexRow++
         }
-        triangle.originalPositionX = indexColumn * this.triangleLength
+        triangle.originalPositionX = indexColumn * (this.triangleLength + 5) + 5
         indexColumn++
         triangle.originalPositionY = (indexRow * this.triangleHeight) + this.board.length * ((Math.sqrt(3) / 2) * this.triangleHeight) + 50
         if (isNaN(triangle.positionX)) {
@@ -409,13 +408,19 @@ export default {
     z-index 10
   .operationButtons
     position absolute
-    bottom 6rem
+    bottom 9rem
     padding 0
   .controlButtons
     width 10rem
     position absolute
     bottom 2rem
   .infoText
-    background yellow
+    position absolute
+    padding 4px
+    box-shadow 0 4px 8px 0 rgba(0,0,0,0.2)
+    font-size 18px
+    color #444
+    bottom 7rem
+    background #ffedad
     text-align center
 </style>

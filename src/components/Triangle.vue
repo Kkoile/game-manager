@@ -103,19 +103,30 @@ export default {
         },
         stroke: this.strokeColor,
         strokeWidth: 5,
-        strokeEnabled: !!this.hovered
+        strokeEnabled: !!this.hovered,
+        shadowColor: 'grey',
+        shadowBlur: 5,
+        shadowOffsetX: 1,
+        shadowOffsetY: 1
+      }
+    },
+    configText () {
+      return {
+        fontSize: 18,
+        fontFamily: 'Helvetica',
+        fill: '#444'
       }
     },
     configBottomText () {
       const config = {
-        text: this.textHypotenuse,
-        fontSize: 15
+        ...this.configText,
+        text: this.textHypotenuse
       }
       switch (this.direction) {
         case 'up':
         case 'right':
         case 'left':
-          config.x = 0
+          config.x = -config.text.length * config.fontSize / 4
           config.y = this.height / 2 - config.fontSize
           break
         case 'down':
@@ -128,8 +139,8 @@ export default {
     },
     configLeftText () {
       const config = {
-        text: this.textLeft,
-        fontSize: 15
+        ...this.configText,
+        text: this.textLeft
       }
       switch (this.direction) {
         case 'up':
@@ -140,7 +151,7 @@ export default {
         case 'down':
           config.x = -this.length / 4
           config.y = -1 / 3 * config.fontSize
-          config.lineHeight = -1
+          config.lineHeight = -1.5
           config.rotation = 120
           break
         case 'right':
@@ -159,25 +170,26 @@ export default {
     },
     configRightText () {
       const config = {
-        text: this.textRight,
-        fontSize: 15
+        ...this.configText,
+        text: this.textRight
       }
       switch (this.direction) {
         case 'up':
           config.x = this.length / 4
           config.y = 0
           config.rotation = 60
+          config.lineHeight = 1.5
           break
         case 'down':
           config.x = this.length / 4
           config.y = 0
-          config.lineHeight = -1
+          config.lineHeight = -1.5
           config.rotation = -120
           break
         case 'right':
           config.x = this.length / 4
           config.y = 0
-          config.lineHeight = -1
+          config.lineHeight = -1.5
           config.rotation = -120
           break
         case 'left':
@@ -193,20 +205,20 @@ export default {
     moveTo (x, y) {
       this.$refs.node.getNode().to({ x: (this.length / 2) + x, y: this.height / 2 + y })
     },
-    applyCorrdinatesToEvent (event) {
+    applyCoordinatesToEvent (event) {
       event.evt.x = event.evt.type === 'mousemove' ? event.evt.x : event.evt.changedTouches[0].clientX
       event.evt.y = event.evt.type === 'mousemove' ? event.evt.y : event.evt.changedTouches[0].clientY
     },
     handleDragStart (event) {
-      this.applyCorrdinatesToEvent(event)
+      this.applyCoordinatesToEvent(event)
       this.$emit('dragstart', this.object, event)
     },
     handleDragEnd (event) {
-      this.applyCorrdinatesToEvent(event)
+      this.applyCoordinatesToEvent(event)
       this.$emit('dragend', this.object, event)
     },
     handleDragMove (event) {
-      this.applyCorrdinatesToEvent(event)
+      this.applyCoordinatesToEvent(event)
       this.$emit('dragmove', this.object, event)
     },
     handleClick (event) {
@@ -215,21 +227,3 @@ export default {
   }
 }
 </script>
-
-<style lang='stylus'>
-  .text
-    position absolute
-
-  .leftInner
-    left 25%
-    top 50%
-
-  .rightInner
-    right 25%
-    top 50%
-
-  .bottomOuter
-    left 50%
-    bottom 0
-
-</style>
