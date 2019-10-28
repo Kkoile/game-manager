@@ -78,8 +78,12 @@ export default {
         x: this.positionX + this.length / 2 + offset,
         y: this.positionY + this.height / 2 + offset,
         rotation: this.rotation,
-        visible: this.visible
+        visible: this.visible,
+        zIndex: this.hovered ? this.maxZIndex : undefined
       }
+    },
+    maxZIndex () {
+      return this.$parent.$children.length - 1
     },
     configTriangle () {
       return {
