@@ -54,6 +54,11 @@ export default {
       default: true
     }
   },
+  data () {
+    return {
+      isDragged: false
+    }
+  },
   computed: {
     height () {
       return (Math.sqrt(3) / 2) * this.length
@@ -78,12 +83,8 @@ export default {
         x: this.positionX + this.length / 2 + offset,
         y: this.positionY + this.height / 2 + offset,
         rotation: this.rotation,
-        visible: this.visible,
-        zIndex: this.hovered ? this.maxZIndex : undefined
+        visible: this.visible
       }
-    },
-    maxZIndex () {
-      return this.$parent.$children.length - 1
     },
     configTriangle () {
       return {
@@ -211,10 +212,12 @@ export default {
     },
     handleDragStart (event) {
       this.applyCoordinatesToEvent(event)
+      this.isDragged = true
       this.$emit('dragstart', this.object, event)
     },
     handleDragEnd (event) {
       this.applyCoordinatesToEvent(event)
+      this.isDragged = false
       this.$emit('dragend', this.object, event)
     },
     handleDragMove (event) {
@@ -223,6 +226,9 @@ export default {
     },
     handleClick (event) {
       this.$emit('click', this.object, event)
+    },
+    intersects (point) {
+      return this.$refs.shape.getNode().intersects(point)
     }
   }
 }

@@ -6,29 +6,27 @@
     </div>
     <v-stage :config="{y: 20, width: $q.screen.width, height: $q.screen.height - 200}" ref="stage">
       <v-layer ref="layer">
-        <div class="flex row" :key="`board-row-${i}`" v-for="(row, i) in board">
-          <div :key="`board-row-${i}-column-${j}`" v-for="(triangle, j) in row">
-            <Triangle
-              :object="triangle"
-              :positionX="triangle.positionX"
-              :positionY="triangle.positionY"
-              :length="triangleLength"
-              :direction="triangle.direction"
-              :text-hypotenuse="triangle.textHypotenuse"
-              :text-left="triangle.textLeft"
-              :text-right="triangle.textRight"
-              :color="triangle.color"
-              strokeColor="gold"
-              :hovered="hoveredElement === triangle"
-            />
-          </div>
-        </div>
+        <Triangle
+          :color="triangle.color"
+          :direction="triangle.direction"
+          :hovered="hoveredElement === triangle"
+          :key="`boardElement-${i}`"
+          :length="triangleLength"
+          :object="triangle"
+          :positionX="triangle.positionX"
+          :positionY="triangle.positionY"
+          :text-hypotenuse="triangle.textHypotenuse"
+          :text-left="triangle.textLeft"
+          :text-right="triangle.textRight"
+          strokeColor="gold"
+          v-for="(triangle, i) in board"
+        />
       </v-layer>
 
       <v-layer ref="missingElements">
         <Triangle
-          :ref="`missingElement-${i}`"
-          :key="`missingElement-${i}`" v-for="(triangle, i) in missingElements"
+          :hovered="hoveredMissingElement === triangle"
+          :key="`missingElement-${triangle.index}`" :ref="`missingElement-${triangle.index}`"
           :object="triangle"
           :positionX="triangle.positionX"
           :positionY="triangle.positionY"
@@ -39,10 +37,10 @@
           :text-left="triangle.textLeft"
           :text-right="triangle.textRight"
           :toggle="triangle.toggle"
-          :hovered="triangle.selected"
           :visible="!triangle.combined"
           color="#dcffcc"
           strokeColor="gold"
+          v-for="(triangle) in missingElements"
           @dragstart="handleDragStart"
           @dragend="handleDragEnd"
           @dragmove="handleDragMove"
@@ -52,10 +50,6 @@
     </v-stage>
     <div class="infoText" v-if="game.infoText && !won">
       {{$t(game.infoText)}}
-    </div>
-    <div class="flex row justify-around full-width operationButtons" v-if="!won && elementsToOperate.length > 0">
-      <q-btn :disabled="!elementsToOperateCanBeAdded" @click="addElements" color="primary" icon="add" round size="2rem"/>
-      <q-btn :disabled="elementsToOperate.length > 1" @click="rotateElements" color="primary" icon="cached" round size="2rem"/>
     </div>
     <div
       class="flex justify-around row controlButtons"
@@ -82,13 +76,14 @@ export default {
   data () {
     return {
       hoveredElement: null,
-      elementsToOperate: [],
+      hoveredMissingElement: null,
       colors: [
         '#c2e8ce',
         '#f2eee5',
         '#f6ad7b',
         '#ea9d9d'
       ],
+      distanceBetweenMissingElements: 10,
       game: {},
       won: false,
       moves: []
@@ -106,15 +101,8 @@ export default {
     this.saveGame()
   },
   computed: {
-    elementsToOperateCanBeAdded () {
-      if (this.elementsToOperate.length < 2) {
-        return false
-      }
-      const direction = this.elementsToOperate[0].direction
-      return this.elementsToOperate.every(element => element.direction === direction)
-    },
     triangleLength () {
-      return this.$q.screen.width / this.game.board[0].length - 7
+      return this.$q.screen.width / this.game.board[0].length - this.distanceBetweenMissingElements * 0.65
     },
     triangleHeight () {
       return Math.sqrt(3) / 2 * this.triangleLength
@@ -139,6 +127,8 @@ export default {
           }
           return triangle
         })
+      }).flat().sort(element => {
+        return element === this.hoveredElement ? 1 : -1
       })
     },
     missingElements () {
@@ -154,13 +144,13 @@ export default {
         }
         triangle.positionedOnBoard = false
         triangle.index = index
-        if (indexColumn * (this.triangleLength + 1) > this.$q.screen.width) {
+        if (indexColumn * (this.triangleLength + this.distanceBetweenMissingElements + 1) > this.$q.screen.width) {
           indexColumn = 0
           indexRow++
         }
-        triangle.originalPositionX = indexColumn * (this.triangleLength + 5) + 5
+        triangle.originalPositionX = indexColumn * (this.triangleLength + this.distanceBetweenMissingElements / 2) + this.distanceBetweenMissingElements / 2
         indexColumn++
-        triangle.originalPositionY = (indexRow * this.triangleHeight) + this.board.length * ((Math.sqrt(3) / 2) * this.triangleHeight) + 50
+        triangle.originalPositionY = (indexRow * (this.triangleHeight + this.distanceBetweenMissingElements / 2)) + this.game.board.length * ((Math.sqrt(3) / 2) * this.triangleHeight) + 50
         if (isNaN(triangle.positionX)) {
           triangle.positionX = triangle.originalPositionX
           triangle.positionY = triangle.originalPositionY
@@ -169,6 +159,8 @@ export default {
           }
         }
         return triangle
+      }).sort(element => {
+        return element.isDragging ? 1 : -1
       })
     }
   },
@@ -183,7 +175,6 @@ export default {
     },
     onRestartPressed () {
       this.won = false
-      this.elementsToOperate = []
       this.timeOutIdForApperance = null
       this.hoveredElement = null
       this.moves = []
@@ -198,7 +189,6 @@ export default {
         }
         const lastState = this.moves.splice(-1, 1)[0]
         this.game = lastState
-        this.elementsToOperate = []
       }
     },
     onNextGamePressed () {
@@ -270,19 +260,40 @@ export default {
       const currentState = JSON.parse(JSON.stringify(this.game))
       delete currentState.moves
       currentState.missingElements.forEach((triangle) => {
-        triangle.selected = false
+        triangle.isDragging = undefined
         triangle.toggle = undefined
         triangle.positionX = undefined
         triangle.positionY = undefined
       })
       return currentState
     },
-    handleDragStart () {
-      this.elementsToOperate.forEach((triangle) => {
-        triangle.selected = false
-        this.$set(this.game.missingElements, triangle.index, triangle)
+    handleDragStart (triangle) {
+      triangle.isDragging = true
+      this.$set(this.game.missingElements, triangle.index, triangle)
+    },
+    handleDragMove (triangle, event) {
+      const shape = this.$refs.layer.$children.filter(element => !!element.object.placeholder).find(element => {
+        return element.intersects(event.evt)
       })
-      this.elementsToOperate = []
+      if (shape) {
+        this.hoveredElement = shape.object
+      } else {
+        this.hoveredElement = null
+      }
+
+      const missingElement = this.$refs.missingElements.$children.filter(element => element.object !== triangle).find(element => {
+        return element.intersects(event.evt)
+      })
+      if (missingElement) {
+        const object = missingElement.object
+        if (object && object.direction === triangle.direction) {
+          this.hoveredMissingElement = object
+        } else {
+          this.hoveredMissingElement = null
+        }
+      } else {
+        this.hoveredMissingElement = null
+      }
     },
     handleDragEnd (triangle, event) {
       const currentState = this.getCurrentState()
@@ -294,6 +305,8 @@ export default {
         this.hoveredElement.placeholderFilled = true
         this.$set(this.game.board, this.hoveredElement.index, this.hoveredElement)
         this.evaluateWinningCondition()
+      } else if (this.hoveredMissingElement) {
+        this.addElements(triangle, this.hoveredMissingElement)
       } else {
         triangle.positionedOnBoard = false
         triangle.positionX = triangle.originalPositionX
@@ -307,66 +320,43 @@ export default {
       }
       this.rerenderMissingTiles()
       triangle.toggle = !triangle.toggle
+      triangle.isDragging = false
       this.hoveredElement = null
+      this.hoveredMissingElement = null
       this.$set(this.game.missingElements, triangle.index, triangle)
       const newState = this.getCurrentState()
       if (JSON.stringify(currentState) !== JSON.stringify(newState)) {
         this.moves.push(currentState)
       }
     },
-    handleDragMove (triangle, event) {
-      const shape = this.$refs.layer.getNode().getIntersection(event.evt)
-      if (shape) {
-        const object = shape.getAttr('object')
-        if (object && object.placeholder) {
-          this.hoveredElement = object
-        } else {
-          this.hoveredElement = null
-        }
-      } else {
-        this.hoveredElement = null
-      }
-    },
     handleClick (clickedTriangle) {
-      if (clickedTriangle.selected) {
-        clickedTriangle.selected = false
-        const index = this.elementsToOperate.findIndex((triangle) => triangle.index === clickedTriangle.index)
-        this.$delete(this.elementsToOperate, index)
-      } else {
-        clickedTriangle.selected = true
-        this.elementsToOperate.push(clickedTriangle)
-      }
-      this.$set(this.game.missingElements, clickedTriangle.index, clickedTriangle)
-      this.rerenderMissingTiles()
+      this.rotateElement(clickedTriangle)
     },
-    rotateElements () {
+    rotateElement (triangle) {
       const currentState = this.getCurrentState()
-      this.elementsToOperate.forEach(triangle => {
-        if (triangle.direction === 'down') {
-          triangle.direction = 'up'
-        } else {
-          triangle.direction = 'down'
-        }
-        const oldTextHypotenuse = triangle.textHypotenuse
-        const oldValueHypotenuse = triangle.valueHypotenuse
-        triangle.textHypotenuse = triangle.textLeft
-        triangle.valueHypotenuse = triangle.valueLeft
-        triangle.textLeft = triangle.textRight
-        triangle.valueLeft = triangle.valueRight
-        triangle.textRight = oldTextHypotenuse
-        triangle.valueRight = oldValueHypotenuse
+      if (triangle.direction === 'down') {
+        triangle.direction = 'up'
+      } else {
+        triangle.direction = 'down'
+      }
+      const oldTextHypotenuse = triangle.textHypotenuse
+      const oldValueHypotenuse = triangle.valueHypotenuse
+      triangle.textHypotenuse = triangle.textLeft
+      triangle.valueHypotenuse = triangle.valueLeft
+      triangle.textLeft = triangle.textRight
+      triangle.valueLeft = triangle.valueRight
+      triangle.textRight = oldTextHypotenuse
+      triangle.valueRight = oldValueHypotenuse
 
-        this.$set(this.missingElements, triangle.index, triangle)
-      })
+      this.$set(this.game.missingElements, triangle.index, triangle)
       this.moves.push(currentState)
     },
-    addElements () {
-      const currentState = this.getCurrentState()
-      const valueHypotenuse = this.elementsToOperate.reduce((accumulator, triangle) => accumulator + triangle.valueHypotenuse, 0)
-      const valueRight = this.elementsToOperate.reduce((accumulator, triangle) => accumulator + triangle.valueRight, 0)
-      const valueLeft = this.elementsToOperate.reduce((accumulator, triangle) => accumulator + triangle.valueLeft, 0)
+    addElements (...elementsToOperate) {
+      const valueHypotenuse = elementsToOperate.reduce((accumulator, triangle) => accumulator + triangle.valueHypotenuse, 0)
+      const valueRight = elementsToOperate.reduce((accumulator, triangle) => accumulator + triangle.valueRight, 0)
+      const valueLeft = elementsToOperate.reduce((accumulator, triangle) => accumulator + triangle.valueLeft, 0)
       const newTriangle = {
-        direction: this.elementsToOperate[0].direction,
+        direction: elementsToOperate[0].direction,
         valueHypotenuse: valueHypotenuse,
         textHypotenuse: `${valueHypotenuse}`,
         valueLeft: valueLeft,
@@ -374,7 +364,7 @@ export default {
         valueRight: valueRight,
         textRight: `${valueRight}`
       }
-      this.elementsToOperate.sort((a, b) => { return b.index - a.index }).forEach((triangle) => {
+      elementsToOperate.sort((a, b) => { return b.index - a.index }).forEach((triangle) => {
         triangle.combined = true
         this.$set(this.game.missingElements, triangle.index, triangle)
       })
@@ -383,8 +373,6 @@ export default {
         this.timeOutIdForApperance = null
         this.game.missingElements.push(newTriangle)
       }, 500)
-      this.elementsToOperate = []
-      this.moves.push(currentState)
     },
     rerenderMissingTiles () {
       this.game.missingElements.forEach((triangle, index) => {
