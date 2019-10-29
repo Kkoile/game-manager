@@ -131,7 +131,7 @@ export default {
           config.y = this.height / 2 - config.fontSize
           break
         case 'down':
-          config.x = 0
+          config.x = config.text.length * config.fontSize / 4
           config.y = this.height / 2
           config.rotation = 180
           break
