@@ -330,7 +330,9 @@ export default {
       }
     },
     handleClick (clickedTriangle) {
-      this.rotateElement(clickedTriangle)
+      if (!this.won) {
+        this.rotateElement(clickedTriangle)
+      }
     },
     rotateElement (triangle) {
       const currentState = this.getCurrentState()
