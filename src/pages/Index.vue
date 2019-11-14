@@ -9,7 +9,7 @@
       round
       size="2rem"
       v-on:click="quickStart" />
-    <q-btn color="primary" v-on:click="navToLevels" >{{$t('label.levels')}}</q-btn>
+    <q-btn color="primary" size="1.2rem" v-on:click="navToLevels" >{{$t('label.levels')}}</q-btn>
   </div>
 </template>
 

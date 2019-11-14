@@ -1,10 +1,10 @@
 <template>
-  <div class="flex justify-around items-center container column">
+  <div class="flex justify-around items-center column">
     <q-btn @click="$router.go(-1)" class="closeButton" flat icon="close" />
     <div class="flex flex-center" v-if="won">
-      <h2 align="center">{{$t('message.solved')}}</h2>
+      <h2 align="center" class="solved">{{$t('message.solved')}}</h2>
     </div>
-    <v-stage :config="{y: 20, width: $q.screen.width, height: $q.screen.height - 200}" ref="stage">
+    <v-stage :config="{width: $q.screen.width, height: $q.screen.height - 20}" class="canvas" ref="stage">
       <v-layer ref="layer">
         <Triangle
           :color="triangle.color"
@@ -18,7 +18,7 @@
           :text-hypotenuse="triangle.textHypotenuse"
           :text-left="triangle.textLeft"
           :text-right="triangle.textRight"
-          strokeColor="gold"
+          strokeColor="#f1f12f"
           v-for="(triangle, i) in board"
         />
       </v-layer>
@@ -38,8 +38,8 @@
           :text-right="triangle.textRight"
           :toggle="triangle.toggle"
           :visible="!triangle.combined"
-          color="#dcffcc"
-          strokeColor="gold"
+          color="#f04548"
+          strokeColor="#f1f12f"
           v-for="(triangle) in missingElements"
           @dragstart="handleDragStart"
           @dragend="handleDragEnd"
@@ -55,12 +55,12 @@
       class="flex justify-around row controlButtons"
       v-if="!won"
     >
-      <q-btn :disabled="moves.length < 1" @click="onUndoPressed" color="secondary" icon="undo" round size="1rem"/>
-      <q-btn @click="onRestartPressed" color="secondary" icon="delete" round size="1rem"/>
+      <q-btn :disabled="moves.length < 1" @click="onUndoPressed" color="primary" icon="undo" round size="1.2rem"/>
+      <q-btn @click="onRestartPressed" color="primary" icon="delete" round size="1.2rem"/>
     </div>
-    <div class="flex row justify-around full-width controlButtons" v-else>
-      <q-btn @click="onRestartPressed" color="secondary">{{$t('button.playAgain')}}</q-btn>
-      <q-btn @click="onNextGamePressed" color="secondary">Next</q-btn>
+    <div class="flex row justify-around controlButtons" v-else>
+      <q-btn @click="onRestartPressed" color="primary" icon="undo" round size="1.2rem" />
+      <q-btn @click="onNextGamePressed" color="primary" icon="done" round size="1.2rem" />
     </div>
   </div>
 </template>
@@ -78,10 +78,11 @@ export default {
       hoveredElement: null,
       hoveredMissingElement: null,
       colors: [
-        '#c2e8ce',
-        '#f2eee5',
-        '#f6ad7b',
-        '#ea9d9d'
+        '#F45905',
+        '#45969B',
+        '#C70D3A',
+        '#B2C14B',
+        '#75A1DA'
       ],
       distanceBetweenMissingElements: 10,
       game: {},
@@ -390,27 +391,28 @@ export default {
 </script>
 
 <style lang='stylus'>
+  .solved
+    color: #FFFFFF
+  .canvas
+    padding-top 20px
   .closeButton
     position absolute
-    left 0.5rem
-    top 0.1rem
+    font-size: 22px
+    left 12px
+    top 4px
+    color: #F5F5F5
     padding 0
     z-index 10
-  .operationButtons
-    position absolute
-    bottom 9rem
-    padding 0
   .controlButtons
     width 10rem
     position absolute
-    bottom 2rem
+    bottom 1.5rem
   .infoText
     position absolute
-    padding 4px
-    box-shadow 0 4px 8px 0 rgba(0,0,0,0.2)
+    padding 8px
     font-size 18px
-    color #444
-    bottom 7rem
-    background #ffedad
+    color #F5F5F5
+    bottom 6.5rem
+    background: rgba(255, 255, 255, 0.05)
     text-align center
 </style>

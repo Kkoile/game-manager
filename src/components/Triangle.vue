@@ -103,19 +103,16 @@ export default {
           context.fillStrokeShape(shape)
         },
         stroke: this.strokeColor,
-        strokeWidth: 5,
-        strokeEnabled: !!this.hovered,
-        shadowColor: 'grey',
-        shadowBlur: 5,
-        shadowOffsetX: 1,
-        shadowOffsetY: 1
+        strokeWidth: 8,
+        strokeEnabled: !!this.hovered
       }
     },
     configText () {
       return {
         fontSize: 18,
-        fontFamily: 'Helvetica',
-        fill: '#444'
+        fontFamily: 'Inter',
+        fontFeatureSettings: "'tnum' 1, 'frac' 1",
+        fill: '#fff'
       }
     },
     configBottomText () {
