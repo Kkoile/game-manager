@@ -1,5 +1,6 @@
 <template>
   <div class="flex justify-around items-center column">
+    <StarBackground />
     <q-btn @click="$router.go(-1)" class="closeButton" flat icon="close" />
     <div class="flex flex-center" v-if="won">
       <h2 align="center" class="solved">{{$t('message.solved')}}</h2>
@@ -68,10 +69,12 @@
 <script>
 import Triangle from '../components/Triangle'
 import MyStorage from '../lib/storage'
+import StarBackground from '../components/StarBackground'
 export default {
   name: 'Game',
   components: {
-    Triangle
+    Triangle,
+    StarBackground
   },
   data () {
     return {

@@ -1,22 +1,29 @@
 <template>
   <div class='flex flex-center column'>
+    <StarBackground />
     <div class="flex flex-center full-width header">
       <h2>Trilogic</h2>
     </div>
-    <q-btn
-      class="quickStart"
-      icon="play_arrow"
-      round
-      size="2rem"
-      v-on:click="quickStart" />
-    <q-btn color="primary" size="1.2rem" v-on:click="navToLevels" >{{$t('label.levels')}}</q-btn>
+    <div class="flex flex-center column full-width footer">
+      <q-btn
+        class="quickStart"
+        icon="play_arrow"
+        round
+        size="2rem"
+        v-on:click="quickStart" />
+      <q-btn color="white" size="1.2rem" text-color="black" v-on:click="navToLevels" >{{$t('label.levels')}}</q-btn>
+    </div>
   </div>
 </template>
 
 <script>
 import MyStorage from '../lib/storage'
+import StarBackground from '../components/StarBackground'
 export default {
   name: 'Index',
+  components: {
+    StarBackground
+  },
   methods: {
     quickStart () {
       const nextLevelIdentifier = MyStorage.getNextLevelIdentifier()
@@ -37,10 +44,16 @@ export default {
   @import '~quasar-variables'
 
   .header
+    position relative
     height 60vh
-    background-color $primary
     color white
+  .footer
+    background-color $primary
+    position relative
+    height 40vh
   .quickStart
-    top -3rem
+    transform translateY(-110%)
     background-color white
+  .buttonText
+    color black
 </style>
