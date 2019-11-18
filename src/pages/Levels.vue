@@ -55,8 +55,6 @@ export default {
 </script>
 
 <style lang='stylus'>
-  @import '~quasar-variables'
-
   .container
     padding-top 10px
     padding-bottom 30px

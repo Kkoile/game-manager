@@ -41,8 +41,6 @@ export default {
 </script>
 
 <style lang='stylus'>
-  @import '~quasar-variables'
-
   .header
     position relative
     height 60vh
