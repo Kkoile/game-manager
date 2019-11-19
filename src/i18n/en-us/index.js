@@ -4,7 +4,9 @@
 export default {
   label: {
     level: 'Level',
-    levels: 'Levels'
+    levels: 'Levels',
+    login: 'Login',
+    logout: 'Logout'
   },
   button: {
     playAgain: 'Play Again',
@@ -12,7 +14,11 @@ export default {
   },
   message: {
     noGameLeft: 'No Game Left',
-    solved: 'Solved!'
+    solved: 'Solved!',
+    logout: {
+      success: 'Successfully logged out!',
+      error: 'Error while logging out!'
+    }
   },
   introduction: {
     dragDrop: 'Fill the grey placeholders in the figure at the top with the elements below it. The values of the edges have to match.',

@@ -12,6 +12,10 @@ export default {
   },
   message: {
     noGameLeft: 'Kein weiteres Spiel',
-    solved: 'Geschafft!'
+    solved: 'Geschafft!',
+    logout: {
+      success: 'Erfolgreich abgemeldet!',
+      error: 'Es gab ein Problem beim abmelden!'
+    }
   }
 }
