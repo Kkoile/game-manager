@@ -17,7 +17,7 @@
           v-on:click="openLevel(level.identifier)">
           <div class="flex flex-center levelBody">
             <q-icon color="primary" name="done" size="2.2rem" v-if="!!level.won"/>
-            <q-icon color="primary" name="access_time" size="1.5rem" v-if="level.moves && level.moves.length > 0 && !level.won"/>
+            <q-icon color="primary" name="access_time" size="1.5rem" v-if="level.started && !level.won"/>
             {{$t('label.level')}} {{i + 1}}
           </div>
         </q-card>
@@ -40,12 +40,8 @@ export default {
     this.loadLevels()
   },
   methods: {
-    loadLevels () {
-      this.levels = []
-      const levels = require(`../assets/levels/levels.json`)
-      levels.forEach((identifier) => {
-        this.levels.push(MyStorage.loadGame(identifier))
-      })
+    async loadLevels () {
+      this.levels = await MyStorage.getLevels()
     },
     openLevel (identifier) {
       this.$router.push(`/game/${identifier}`)

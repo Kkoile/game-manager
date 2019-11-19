@@ -40,8 +40,8 @@ export default {
     }
   },
   methods: {
-    quickStart () {
-      const nextLevelIdentifier = MyStorage.getNextLevelIdentifier()
+    async quickStart () {
+      const nextLevelIdentifier = await MyStorage.getNextLevelIdentifier()
       if (nextLevelIdentifier) {
         this.$router.push(`/game/${nextLevelIdentifier}`)
       } else {

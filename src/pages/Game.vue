@@ -1,5 +1,5 @@
 <template>
-  <div class="flex justify-around items-center column">
+  <div class="flex justify-around items-center column" v-if="!loading">
     <StarBackground />
     <q-btn @click="$router.go(-1)" class="closeButton" flat icon="close" />
     <div class="flex flex-center" v-if="won">
@@ -78,6 +78,7 @@ export default {
   },
   data () {
     return {
+      loading: true,
       hoveredElement: null,
       hoveredMissingElement: null,
       colors: [
@@ -106,12 +107,21 @@ export default {
   },
   computed: {
     triangleLength () {
+      if (this.loading) {
+        return 1
+      }
       return this.$q.screen.width / this.game.board[0].length - this.distanceBetweenMissingElements * 0.65
     },
     triangleHeight () {
+      if (this.loading) {
+        return 1
+      }
       return Math.sqrt(3) / 2 * this.triangleLength
     },
     board () {
+      if (this.loading) {
+        return []
+      }
       let colorIndex = 0
       const offset = (this.$q.screen.width - this.triangleLength * (this.game.board[0].length - 1)) / 2
       return this.game.board.map((row, rowIndex) => {
@@ -136,6 +146,9 @@ export default {
       })
     },
     missingElements () {
+      if (this.loading) {
+        return []
+      }
       let indexColumn = 0
       let indexRow = 0
       return this.game.missingElements.map((triangle, index) => {
@@ -169,22 +182,27 @@ export default {
     }
   },
   methods: {
-    saveGame () {
-      MyStorage.saveGame(this.game.identifier, this.won, this.game.board, this.game.missingElements, this.moves)
+    async saveGame () {
+      this.loading = true
+      await MyStorage.saveGame(this.game.identifier, this.won, this.game.board, this.game.missingElements, this.moves)
+      this.loading = false
     },
-    loadGame (identifier) {
-      this.game = MyStorage.loadGame(identifier)
+    async loadGame (identifier) {
+      this.game = await MyStorage.loadGame(identifier)
       this.moves = this.game.moves
       this.won = this.game.won
+      this.loading = false
     },
-    onRestartPressed () {
+    async onRestartPressed () {
       this.won = false
       this.timeOutIdForApperance = null
       this.hoveredElement = null
       this.moves = []
-      const game = MyStorage.loadGame(this.game.identifier, true)
+      this.loading = true
+      const game = await MyStorage.loadGame(this.game.identifier, true)
       this.game.board = game.board
       this.game.missingElements = game.missingElements
+      this.loading = false
     },
     onUndoPressed () {
       if (this.moves.length > 0) {
@@ -195,9 +213,9 @@ export default {
         this.game = lastState
       }
     },
-    onNextGamePressed () {
+    async onNextGamePressed () {
       this.saveGame()
-      const nextLevelIdentifier = MyStorage.getNextLevelIdentifier()
+      const nextLevelIdentifier = await MyStorage.getNextLevelIdentifier()
       if (nextLevelIdentifier) {
         this.$router.replace(`/game/${nextLevelIdentifier}`)
       } else {
