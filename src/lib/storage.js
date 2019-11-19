@@ -7,6 +7,14 @@ const getCurrentUser = async () => {
   return Firebase.auth().currentUser
 }
 
+const deleteUserCollection = async (existingLevels) => {
+  const currentUser = await getCurrentUser()
+  for (const level of existingLevels) {
+    await Firebase.firestore().collection('users').doc(currentUser.uid).collection('levels').doc(level.identifier).delete()
+  }
+  await Firebase.firestore().collection('users').doc(currentUser.uid).delete()
+}
+
 const getDatabaseLevelsReference = async () => {
   const currentUser = await getCurrentUser()
   return Firebase.firestore().collection('users').doc(currentUser.uid).collection('levels')
@@ -85,9 +93,25 @@ const getLevels = async () => {
   })
 }
 
+const getAllGames = async () => {
+  const games = (await (await getDatabaseLevelsReference()).get()).docs
+  return games.map(game => {
+    const data = game.data()
+    return {
+      identifier: game.id,
+      won: data.won,
+      moves: data.moves ? JSON.parse(data.moves) : [],
+      board: JSON.parse(data.board),
+      missingElements: JSON.parse(data.missingElements)
+    }
+  })
+}
+
 export default {
   saveGame,
   loadGame,
   getNextLevelIdentifier,
-  getLevels
+  getLevels,
+  getAllGames,
+  deleteUserCollection
 }

@@ -9,6 +9,7 @@
 
 <script>
 import StarBackground from '../components/StarBackground'
+import MyStorage from '../lib/storage'
 export default {
   name: 'Login',
   components: {
@@ -21,8 +22,25 @@ export default {
         uiShown: () => {
           this.loading = false
         },
-        signInFailure: (error) => {
-          console.error(error)
+        signInFailure: async (error) => {
+          if (error.code !== 'firebaseui/anonymous-upgrade-merge-conflict') {
+            return Promise.resolve()
+          }
+          const anonymousGames = await MyStorage.getAllGames()
+          await MyStorage.deleteUserCollection(anonymousGames)
+          const user = this.$firebase.auth().currentUser
+          await user.delete()
+
+          var cred = error.credential
+          await this.$firebase.auth().signInWithCredential(cred)
+          try {
+            for (const game of anonymousGames) {
+              await MyStorage.saveGame(game.identifier, game.won, game.board, game.missingElements, game.moves)
+            }
+          } catch (error) {
+            console.error(error)
+          }
+          this.$router.replace('/')
         }
       },
       signInSuccessUrl: '/',
