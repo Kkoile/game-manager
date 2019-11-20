@@ -12,6 +12,11 @@
         size="2rem"
         v-on:click="quickStart" />
       <q-btn color="white" size="1.2rem" text-color="black" v-on:click="navToLevels" >{{$t('label.levels')}}</q-btn>
+      <q-btn v-if="!currentUser || currentUser.isAnonymous" class="loginButton" color="white" text-color="black" v-on:click="navToLogin">{{$t('label.login')}}</q-btn>
+      <div v-else class="flex column">
+        <q-btn class="loginButton" color="white" text-color="black" v-on:click="logout">{{$t('label.logout')}}</q-btn>
+        <p class="loggedInText">{{$t('message.currentUser.text', { name: currentUser.displayName })}}.</p>
+      </div>
     </div>
   </div>
 </template>
@@ -24,9 +29,19 @@ export default {
   components: {
     StarBackground
   },
+  mounted () {
+    this.$firebase.auth().onAuthStateChanged(user => {
+      this.currentUser = user
+    })
+  },
+  data: function () {
+    return {
+      currentUser: null
+    }
+  },
   methods: {
-    quickStart () {
-      const nextLevelIdentifier = MyStorage.getNextLevelIdentifier()
+    async quickStart () {
+      const nextLevelIdentifier = await MyStorage.getNextLevelIdentifier()
       if (nextLevelIdentifier) {
         this.$router.push(`/game/${nextLevelIdentifier}`)
       } else {
@@ -35,6 +50,18 @@ export default {
     },
     navToLevels () {
       this.$router.push('/levels')
+    },
+    navToLogin () {
+      this.$router.push('/login')
+    },
+    async logout () {
+      try {
+        await this.$firebase.auth().signOut()
+        this.$q.notify({ message: this.$t('message.logout.success'), icon: 'done', timeout: 1000 })
+      } catch (error) {
+        console.error(error)
+        this.$q.notify({ message: this.$t('message.logout.error'), icon: 'error' })
+      }
     }
   }
 }
@@ -50,8 +77,13 @@ export default {
     position relative
     height 40vh
   .quickStart
-    transform translateY(-110%)
+    transform translateY(-70%)
     background-color white
   .buttonText
     color black
+  .loginButton
+    align-self center
+    margin-top 8px
+  .loggedInText
+    color rgba(255,255,255,0.8)
 </style>

@@ -5,13 +5,15 @@ module.exports = function (ctx) {
     // app boot file (/src/boot)
     // --> boot files are part of "main.js"
     boot: [
+      'firebase',
       'i18n',
       'vueDragDrop',
       'vueKonva'
     ],
 
     css: [
-      'app.styl'
+      'app.styl',
+      '../../node_modules/firebaseui/dist/firebaseui.css'
     ],
 
     extras: [
