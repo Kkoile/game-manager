@@ -1,6 +1,6 @@
 <template>
   <div class="flex justify-around items-center column" v-if="!loading">
-    <StarBackground />
+    <StarBackground style="z-index: -1" />
     <q-btn @click="$router.go(-1)" class="closeButton" flat icon="close" />
     <div class="flex flex-center" v-if="won">
       <h2 align="center" class="solved">{{$t('message.solved')}}</h2>
@@ -39,7 +39,7 @@
           :text-right="triangle.textRight"
           :toggle="triangle.toggle"
           :visible="!triangle.combined"
-          color="#f04548"
+          color="#B53436"
           strokeColor="#f1f12f"
           v-for="(triangle) in missingElements"
           @dragstart="handleDragStart"
@@ -82,11 +82,11 @@ export default {
       hoveredElement: null,
       hoveredMissingElement: null,
       colors: [
-        '#F45905',
-        '#45969B',
-        '#C70D3A',
-        '#B2C14B',
-        '#75A1DA'
+        '#f0ab00',
+        '#5AAA95',
+        '#8B1E3F',
+        '#006A70',
+        '#124E78'
       ],
       distanceBetweenMissingElements: 10,
       game: {},
