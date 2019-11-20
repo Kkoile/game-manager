@@ -1,6 +1,6 @@
 <template>
   <div class="flex justify-around items-center column">
-    <StarBackground />
+    <StarBackground style="z-index: -1" />
     <q-btn @click="$router.go(-1)" class="closeButton" flat icon="close" />
     <div class="flex flex-center" v-if="won">
       <h2 align="center" class="solved">{{$t('message.solved')}}</h2>
