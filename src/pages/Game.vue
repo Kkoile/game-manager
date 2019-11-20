@@ -2,9 +2,6 @@
   <div class="flex justify-around items-center column" v-if="!loading">
     <StarBackground style="z-index: -1" />
     <q-btn @click="$router.go(-1)" class="closeButton" flat icon="close" />
-    <div class="flex flex-center" v-if="won">
-      <h2 align="center" class="solved">{{$t('message.solved')}}</h2>
-    </div>
     <v-stage :config="{width: $q.screen.width, height: $q.screen.height - 20}" class="canvas" ref="stage">
       <v-layer ref="layer">
         <Triangle
@@ -49,6 +46,9 @@
         />
       </v-layer>
     </v-stage>
+    <div class="flex flex-center solvedText" v-if="won">
+      <h2 align="center">{{$t('message.solved')}}</h2>
+    </div>
     <div class="infoText" v-if="game.infoText && !won">
       {{$t(game.infoText)}}
     </div>
@@ -412,8 +412,10 @@ export default {
 </script>
 
 <style lang='stylus'>
-  .solved
-    color: #FFFFFF
+  .solvedText
+    position absolute
+    h2
+      color #FFFFFF
   .canvas
     padding-top 20px
   .closeButton
