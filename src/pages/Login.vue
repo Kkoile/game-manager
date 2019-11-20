@@ -1,6 +1,7 @@
 <template>
   <div class='flex flex-center column'>
     <StarBackground class="background" />
+    <q-btn @click="cancel" class="closeButton" flat icon="close" />
     <h1 class="headline">Login</h1>
     <div id="firebaseui-auth-container"/>
     <div v-if="loading">Loading...</div>
@@ -60,6 +61,11 @@ export default {
     return {
       loading: true
     }
+  },
+  methods: {
+    cancel () {
+      this.$router.replace('/')
+    }
   }
 }
 </script>
@@ -68,4 +74,12 @@ export default {
     color white
   .background
     z-index -1
+  .closeButton
+    position absolute
+    font-size: 22px
+    left 12px
+    top 4px
+    color: #F5F5F5
+    padding 0
+    z-index 10
 </styles>

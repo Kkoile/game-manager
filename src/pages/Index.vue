@@ -12,10 +12,10 @@
         size="2rem"
         v-on:click="quickStart" />
       <q-btn color="white" size="1.2rem" text-color="black" v-on:click="navToLevels" >{{$t('label.levels')}}</q-btn>
-      <q-btn v-if="!currentUser || currentUser.isAnonymous" v-on:click="navToLogin">{{$t('label.login')}}</q-btn>
-      <div v-else>
-        You're currently logged in as {{currentUser.displayName}}.
-        <q-btn v-on:click="logout">{{$t('label.logout')}}</q-btn>
+      <q-btn v-if="!currentUser || currentUser.isAnonymous" class="loginButton" color="white" text-color="black" v-on:click="navToLogin">{{$t('label.login')}}</q-btn>
+      <div v-else class="flex column">
+        <q-btn class="loginButton" color="white" text-color="black" v-on:click="logout">{{$t('label.logout')}}</q-btn>
+        <p class="loggedInText">{{$t('message.currentUser.text', { name: currentUser.displayName })}}.</p>
       </div>
     </div>
   </div>
@@ -77,8 +77,13 @@ export default {
     position relative
     height 40vh
   .quickStart
-    transform translateY(-95%)
+    transform translateY(-70%)
     background-color white
   .buttonText
     color black
+  .loginButton
+    align-self center
+    margin-top 8px
+  .loggedInText
+    color rgba(255,255,255,0.8)
 </style>

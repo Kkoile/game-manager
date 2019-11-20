@@ -18,6 +18,9 @@ export default {
     logout: {
       success: 'Successfully logged out!',
       error: 'Error while logging out!'
+    },
+    currentUser: {
+      text: 'You\'re currently logged in as {name}'
     }
   },
   introduction: {
