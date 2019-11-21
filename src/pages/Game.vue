@@ -2,7 +2,7 @@
   <div class="flex justify-around items-center column" v-if="!loading">
     <StarBackground style="z-index: -1" />
     <q-btn @click="$router.go(-1)" class="closeButton" flat icon="close" />
-    <v-stage :config="{width: $q.screen.width, height: $q.screen.height - 20}" class="canvas" ref="stage">
+    <v-stage :config="{width: $q.screen.width, height: $q.screen.height}" ref="stage">
       <v-layer ref="layer">
         <Triangle
           :color="triangle.color"
@@ -125,7 +125,7 @@ export default {
       }
       let colorIndex = 0
       const offsetX = (this.$q.screen.width - this.triangleLength * (this.game.board[0].length - 1)) / 2
-      const offsetY = 8
+      const offsetY = 28
       return this.game.board.map((row, rowIndex) => {
         return row.map((triangle, columnIndex) => {
           triangle.positionX = offsetX + columnIndex * this.triangleLength / 2
@@ -169,7 +169,7 @@ export default {
         }
         triangle.originalPositionX = indexColumn * (this.triangleLength + this.distanceBetweenMissingElements / 2) + this.distanceBetweenMissingElements / 2
         indexColumn++
-        triangle.originalPositionY = (indexRow * (this.triangleHeight + this.distanceBetweenMissingElements / 2)) + this.game.board.length * ((Math.sqrt(3) / 2) * this.triangleHeight) + 60
+        triangle.originalPositionY = (indexRow * (this.triangleHeight + this.distanceBetweenMissingElements / 2)) + this.game.board.length * ((Math.sqrt(3) / 2) * this.triangleHeight) + 80
         if (isNaN(triangle.positionX)) {
           triangle.positionX = triangle.originalPositionX
           triangle.positionY = triangle.originalPositionY
@@ -420,8 +420,6 @@ export default {
     position absolute
     h2
       color #FFFFFF
-  .canvas
-    padding-top 20px
   .closeButton
     position absolute
     font-size: 22px
