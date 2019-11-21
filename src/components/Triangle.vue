@@ -225,30 +225,13 @@ export default {
       this.$emit('click', this.object, event, this)
     },
     intersects (triangle) {
-      const corners = triangle.getCorners()
-      return corners.some(corner => {
-        return this.getShape().intersects(corner)
-      })
+      return this.getShape().intersects(triangle.getCenterPosition())
     },
     getShape () {
       return this.$refs.shape.getNode()
     },
-    getCorners () {
-      const position = this.$refs.node.getNode().getPosition()
-      return [
-        {
-          x: position.x - 1 * (this.length / 5),
-          y: position.y + 1 * (this.height / 5)
-        },
-        {
-          x: position.x + 1 * (this.length / 5),
-          y: position.y + 1 * (this.height / 5)
-        },
-        {
-          x: position.x,
-          y: position.y - 1 * (this.height / 5)
-        }
-      ]
+    getCenterPosition () {
+      return this.$refs.node.getNode().getPosition()
     }
   }
 }
