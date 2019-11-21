@@ -38,6 +38,7 @@
           :visible="!triangle.combined"
           color="#B53436"
           strokeColor="#f1f12f"
+          :shadow="!triangle.positionedOnBoard"
           v-for="(triangle) in missingElements"
           @dragstart="handleDragStart"
           @dragend="handleDragEnd"

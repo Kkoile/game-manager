@@ -52,6 +52,10 @@ export default {
     },
     visible: {
       default: true
+    },
+    shadow: {
+      default: false,
+      type: Boolean
     }
   },
   data () {
@@ -104,7 +108,13 @@ export default {
         },
         stroke: this.strokeColor,
         strokeWidth: 8,
-        strokeEnabled: !!this.hovered
+        strokeEnabled: !!this.hovered,
+        shadowEnabled: !!this.shadow,
+        shadowColor: 'white',
+        shadowBlur: 20,
+        shadowOffsetX: 0,
+        shadowOffsetY: 0
+
       }
     },
     configText () {
