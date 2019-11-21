@@ -57,11 +57,11 @@
       class="flex justify-around row controlButtons"
       v-if="!won"
     >
-      <q-btn :disabled="moves.length < 1" @click="onUndoPressed" color="primary" icon="undo" round size="1.2rem"/>
-      <q-btn @click="onRestartPressed" color="primary" icon="delete" round size="1.2rem"/>
+      <q-btn :disabled="moves.length < 1" @click="onUndoPressed" color="warning" icon="undo" round size="1.2rem"/>
+      <q-btn @click="onRestartPressed" color="negative" icon="delete" round size="1.2rem"/>
     </div>
     <div class="flex row justify-around controlButtons" v-else>
-      <q-btn @click="onRestartPressed" color="primary" icon="undo" round size="1.2rem" />
+      <q-btn @click="onRestartPressed" color="warning" icon="undo" round size="1.2rem" />
       <q-btn @click="onNextGamePressed" color="primary" icon="done" round size="1.2rem" />
     </div>
   </div>
