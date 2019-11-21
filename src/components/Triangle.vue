@@ -118,11 +118,16 @@ export default {
       }
     },
     configText () {
+      const offset = this.toggle ? 1 : 0
       return {
         fontSize: 18,
         fontFamily: 'Inter',
         fontFeatureSettings: "'tnum' 1, 'frac' 1",
-        fill: '#fff'
+        fill: '#fff',
+        width: this.length,
+        align: 'center',
+        x: offset,
+        y: offset
       }
     },
     configBottomText () {
@@ -132,14 +137,12 @@ export default {
       }
       switch (this.direction) {
         case 'up':
-        case 'right':
-        case 'left':
-          config.x = -config.text.length * config.fontSize / 4
-          config.y = this.height / 2 - config.fontSize
+          config.x += -this.length / 2
+          config.y += this.height / 2 - config.fontSize
           break
         case 'down':
-          config.x = config.text.length * config.fontSize / 4
-          config.y = this.height / 2
+          config.x += this.length / 2
+          config.y += this.height / 2
           config.rotation = 180
           break
       }
@@ -152,24 +155,12 @@ export default {
       }
       switch (this.direction) {
         case 'up':
-          config.x = -this.length / 4
-          config.y = 1 / 3 * config.fontSize
+          config.x += -this.length / 2
+          config.y += this.height / 2
           config.rotation = -60
           break
         case 'down':
-          config.x = -this.length / 4
-          config.y = -1 / 3 * config.fontSize
-          config.lineHeight = -1.5
-          config.rotation = 120
-          break
-        case 'right':
-          config.x = -this.length / 4
-          config.y = 0
-          config.rotation = -60
-          break
-        case 'left':
-          config.x = -this.length / 4
-          config.y = 0
+          config.y += -this.height / 2
           config.lineHeight = -1
           config.rotation = 120
           break
@@ -183,27 +174,15 @@ export default {
       }
       switch (this.direction) {
         case 'up':
-          config.x = this.length / 4
-          config.y = 0
+          config.y += -this.height / 2
           config.rotation = 60
-          config.lineHeight = 1.5
+          config.lineHeight = 1
           break
         case 'down':
-          config.x = this.length / 4
-          config.y = 0
-          config.lineHeight = -1.5
+          config.x += this.length / 2
+          config.y += this.height / 2
+          config.lineHeight = -1
           config.rotation = -120
-          break
-        case 'right':
-          config.x = this.length / 4
-          config.y = 0
-          config.lineHeight = -1.5
-          config.rotation = -120
-          break
-        case 'left':
-          config.x = this.length / 4
-          config.y = 0
-          config.rotation = 60
           break
       }
       return config
