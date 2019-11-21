@@ -354,7 +354,7 @@ export default {
       }
     },
     handleClick (clickedTriangle) {
-      if (!this.won) {
+      if (!this.won && !clickedTriangle.positionedOnBoard) {
         this.rotateElement(clickedTriangle)
       }
     },
