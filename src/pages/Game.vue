@@ -291,6 +291,13 @@ export default {
     },
     handleDragStart (triangle) {
       triangle.isDragging = true
+      triangle.positionedOnBoard = false
+      if (triangle.placeholder) {
+        triangle.placeholder.placeholderFilled = false
+        this.$set(this.game.board, triangle.placeholder.index, triangle.placeholder)
+        triangle.placeholder = null
+        this.evaluateWinningCondition()
+      }
       this.$set(this.game.missingElements, triangle.index, triangle)
     },
     handleDragMove (triangle, event, triangleElement) {
@@ -332,15 +339,8 @@ export default {
       } else if (this.hoveredMissingElement) {
         this.addElements(triangle, this.hoveredMissingElement)
       } else {
-        triangle.positionedOnBoard = false
         triangle.positionX = triangle.originalPositionX
         triangle.positionY = triangle.originalPositionY
-        if (triangle.placeholder) {
-          triangle.placeholder.placeholderFilled = false
-          this.$set(this.game.board, triangle.placeholder.index, triangle.placeholder)
-          triangle.placeholder = null
-          this.evaluateWinningCondition()
-        }
       }
       this.rerenderMissingTiles()
       triangle.toggle = !triangle.toggle
