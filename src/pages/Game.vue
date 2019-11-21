@@ -123,11 +123,12 @@ export default {
         return []
       }
       let colorIndex = 0
-      const offset = (this.$q.screen.width - this.triangleLength * (this.game.board[0].length - 1)) / 2
+      const offsetX = (this.$q.screen.width - this.triangleLength * (this.game.board[0].length - 1)) / 2
+      const offsetY = 8
       return this.game.board.map((row, rowIndex) => {
         return row.map((triangle, columnIndex) => {
-          triangle.positionX = offset + columnIndex * this.triangleLength / 2
-          triangle.positionY = rowIndex * ((Math.sqrt(3) / 2) * this.triangleLength)
+          triangle.positionX = offsetX + columnIndex * this.triangleLength / 2
+          triangle.positionY = offsetY + rowIndex * ((Math.sqrt(3) / 2) * this.triangleLength)
           triangle.rowIndex = rowIndex
           triangle.columnIndex = columnIndex
           triangle.direction = (rowIndex % 2 + columnIndex % 2) % 2 === 0 ? 'up' : 'down'
@@ -167,7 +168,7 @@ export default {
         }
         triangle.originalPositionX = indexColumn * (this.triangleLength + this.distanceBetweenMissingElements / 2) + this.distanceBetweenMissingElements / 2
         indexColumn++
-        triangle.originalPositionY = (indexRow * (this.triangleHeight + this.distanceBetweenMissingElements / 2)) + this.game.board.length * ((Math.sqrt(3) / 2) * this.triangleHeight) + 50
+        triangle.originalPositionY = (indexRow * (this.triangleHeight + this.distanceBetweenMissingElements / 2)) + this.game.board.length * ((Math.sqrt(3) / 2) * this.triangleHeight) + 60
         if (isNaN(triangle.positionX)) {
           triangle.positionX = triangle.originalPositionX
           triangle.positionY = triangle.originalPositionY
