@@ -256,13 +256,13 @@ export default {
       if (placeholder.direction !== movedTriangle.direction) {
         return false
       }
-      if (placeholder.valueHypotenuse && placeholder.valueHypotenuse !== movedTriangle.valueHypotenuse) {
+      if (!isNaN(placeholder.valueHypotenuse) && placeholder.valueHypotenuse !== movedTriangle.valueHypotenuse) {
         return false
       }
-      if (placeholder.valueLeft && placeholder.valueLeft !== movedTriangle.valueLeft) {
+      if (!isNaN(placeholder.valueLeft) && placeholder.valueLeft !== movedTriangle.valueLeft) {
         return false
       }
-      if (placeholder.valueRight && placeholder.valueRight !== movedTriangle.valueRight) {
+      if (!isNaN(placeholder.valueRight) && placeholder.valueRight !== movedTriangle.valueRight) {
         return false
       }
       return true
