@@ -210,22 +210,45 @@ export default {
     handleDragStart (event) {
       this.applyCoordinatesToEvent(event)
       this.isDragged = true
-      this.$emit('dragstart', this.object, event)
+      this.$emit('dragstart', this.object, event, this)
     },
     handleDragEnd (event) {
       this.applyCoordinatesToEvent(event)
       this.isDragged = false
-      this.$emit('dragend', this.object, event)
+      this.$emit('dragend', this.object, event, this)
     },
     handleDragMove (event) {
       this.applyCoordinatesToEvent(event)
-      this.$emit('dragmove', this.object, event)
+      this.$emit('dragmove', this.object, event, this)
     },
     handleClick (event) {
-      this.$emit('click', this.object, event)
+      this.$emit('click', this.object, event, this)
     },
-    intersects (point) {
-      return this.$refs.shape.getNode().intersects(point)
+    intersects (triangle) {
+      const corners = triangle.getCorners()
+      return corners.some(corner => {
+        return this.getShape().intersects(corner)
+      })
+    },
+    getShape () {
+      return this.$refs.shape.getNode()
+    },
+    getCorners () {
+      const position = this.$refs.node.getNode().getPosition()
+      return [
+        {
+          x: position.x - 1 * (this.length / 5),
+          y: position.y + 1 * (this.height / 5)
+        },
+        {
+          x: position.x + 1 * (this.length / 5),
+          y: position.y + 1 * (this.height / 5)
+        },
+        {
+          x: position.x,
+          y: position.y - 1 * (this.height / 5)
+        }
+      ]
     }
   }
 }

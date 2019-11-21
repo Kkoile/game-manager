@@ -293,20 +293,22 @@ export default {
       triangle.isDragging = true
       this.$set(this.game.missingElements, triangle.index, triangle)
     },
-    handleDragMove (triangle, event) {
-      const shape = this.$refs.layer.$children.filter(element => !!element.object.placeholder).find(element => {
-        return element.intersects(event.evt)
+    handleDragMove (triangle, event, triangleElement) {
+      const shapes = this.$refs.layer.$children.filter(element => !!element.object.placeholder && !element.object.placeholderFilled).filter(element => {
+        return element.intersects(triangleElement)
       })
-      if (shape) {
+      if (shapes.length === 1) {
+        const shape = shapes[0]
         this.hoveredElement = shape.object
       } else {
         this.hoveredElement = null
       }
 
-      const missingElement = this.$refs.missingElements.$children.filter(element => element.object !== triangle).find(element => {
-        return element.intersects(event.evt)
+      const missingElements = this.$refs.missingElements.$children.filter(element => element.object !== triangle && !element.object.positionedOnBoard).filter(element => {
+        return element.intersects(triangleElement)
       })
-      if (missingElement) {
+      if (missingElements.length === 1) {
+        const missingElement = missingElements[0]
         const object = missingElement.object
         if (object && object.direction === triangle.direction) {
           this.hoveredMissingElement = object
