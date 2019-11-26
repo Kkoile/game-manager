@@ -51,6 +51,7 @@ export default {
     minPlayer: 'Min',
     maxPlayer: 'Max',
     averageTime: 'Spieldauer in Minuten',
-    searchPlaceholder: 'Suchen...'
+    searchPlaceholder: 'Suchen...',
+    currentUser: 'Aktueller Nutzer: {name}'
   }
 }

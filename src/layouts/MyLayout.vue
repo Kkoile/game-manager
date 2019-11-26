@@ -10,7 +10,7 @@
         </q-toolbar-title>
 
         <q-avatar>
-          <q-btn icon="fas fa-chess-bishop" flat @click="$router.push('/')" />
+          <q-btn :disable="!currentUser" icon="fas fa-chess-bishop" flat @click="$router.push('/')" />
         </q-avatar>
       </q-toolbar>
     </q-header>
@@ -38,6 +38,7 @@
           <q-icon name="fas fa-power-off" color="negative"/>
         </q-item-section>
         <q-item-section>
+          <q-item-label caption>{{$t('label.currentUser', {name: currentUser.displayName})}}</q-item-label>
           {{$t('button.logout')}}
         </q-item-section>
       </q-item>
