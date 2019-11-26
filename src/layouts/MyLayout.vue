@@ -38,7 +38,7 @@
           <q-icon name="fas fa-power-off" color="negative"/>
         </q-item-section>
         <q-item-section>
-          <q-item-label caption>{{$t('label.currentUser', {name: currentUser.displayName})}}</q-item-label>
+          <q-item-label v-if="currentUser" caption>{{$t('label.currentUser', {name: currentUser.displayName})}}</q-item-label>
           {{$t('button.logout')}}
         </q-item-section>
       </q-item>
