@@ -10,7 +10,7 @@
         </q-toolbar-title>
 
         <q-avatar>
-          <q-icon name="fas fa-chess-bishop" size="1.5rem" color="white" />
+          <q-btn icon="fas fa-chess-bishop" flat @click="$router.push('/')" />
         </q-avatar>
       </q-toolbar>
     </q-header>
