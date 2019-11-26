@@ -1,23 +1,25 @@
+import MyLayout from '../layouts/MyLayout'
 
 const routes = [
   {
     path: '/',
-    component: () => import('pages/Index.vue')
-  },
-  {
-    path: '/login',
-    component: () => import('pages/Login.vue')
-  },
-  {
-    path: '/levels',
-    component: () => import('layouts/MyLayout.vue'),
+
+    // we use /src/layouts/User component which is imported above
+    component: MyLayout,
     children: [
-      { path: '', component: () => import('pages/Levels.vue') }
+      {
+        path: 'games',
+        component: () => import('pages/Games.vue')
+      },
+      {
+        path: '',
+        component: () => import('pages/Main.vue')
+      },
+      {
+        path: 'login',
+        component: () => import('pages/Login.vue')
+      }
     ]
-  },
-  {
-    path: '/game/:identifier',
-    component: () => import('pages/Game.vue')
   }
 ]
 

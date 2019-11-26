@@ -6,9 +6,7 @@ module.exports = function (ctx) {
     // --> boot files are part of "main.js"
     boot: [
       'firebase',
-      'i18n',
-      'vueDragDrop',
-      'vueKonva'
+      'i18n'
     ],
 
     css: [
@@ -18,10 +16,10 @@ module.exports = function (ctx) {
 
     extras: [
       'roboto-font',
-      'material-icons' // optional, you are not bound to it
+      // 'material-icons' // optional, you are not bound to it
       // 'ionicons-v4',
       // 'mdi-v3',
-      // 'fontawesome-v5',
+      'fontawesome-v5'
       // 'eva-icons'
     ],
 
@@ -29,7 +27,16 @@ module.exports = function (ctx) {
       // all: true, // --- includes everything; for dev only!
 
       components: [
+        'QAvatar',
+        'QBanner',
         'QCard',
+        'QCardActions',
+        'QCardSection',
+        'QDialog',
+        'QInput',
+        'QSelect',
+        'QRadio',
+        'QSeparator',
         'QLayout',
         'QHeader',
         'QDrawer',
@@ -42,18 +49,27 @@ module.exports = function (ctx) {
         'QList',
         'QItem',
         'QItemSection',
-        'QItemLabel'
+        'QItemLabel',
+        'QChip',
+        'QFab',
+        'QFabAction',
+        'QPageSticky',
+        'QSpinnerBall'
       ],
 
       directives: [
-        'Ripple'
+        'Ripple',
+        'ClosePopup'
       ],
 
       // Quasar plugins
       plugins: [
         'Notify',
-        'LocalStorage'
-      ]
+        'LocalStorage',
+        'Loading'
+      ],
+
+      iconSet: 'fontawesome-v5'
 
       // iconSet: 'ionicons-v4'
       // lang: 'de' // Quasar language
@@ -95,13 +111,13 @@ module.exports = function (ctx) {
       // workboxPluginMode: 'InjectManifest',
       // workboxOptions: {},
       manifest: {
-        // name: 'Quasar App',
-        // short_name: 'Quasar-PWA',
-        // description: 'Best PWA App in town!',
+        name: 'Game Manager',
+        short_name: 'Game Manager',
+        description: 'Track your games and get proposals!',
         display: 'standalone',
         orientation: 'portrait',
         background_color: '#ffffff',
-        theme_color: '#027be3',
+        theme_color: '#4caf50',
         icons: [
           {
             'src': 'statics/icons/icon-128x128.png',
