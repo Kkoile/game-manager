@@ -11,10 +11,12 @@
         :key="game.id"
         class="flex column game-element bg-white"
       >
-        <q-card-section>
+        <q-card-section
+          @click="editGame(game.id)">
           <div class="text-h6">{{game.name}}</div>
         </q-card-section>
-        <q-card-section>
+        <q-card-section
+          @click="editGame(game.id)">
           <div class="flex row items-center q-pl-sm">
             <q-icon
               name="fas fa-users"
@@ -28,7 +30,8 @@
             </div>
           </div>
         </q-card-section>
-        <q-card-section>
+        <q-card-section
+          @click="editGame(game.id)">
           <q-chip
             v-for="category in game.categories"
             :key="category.key"
@@ -38,7 +41,8 @@
           </q-chip>
         </q-card-section>
 
-        <q-separator class="bg-white"/>
+        <q-separator class="bg-white"
+                     @click="editGame(game.id)"/>
 
         <q-card-actions align="right">
           <q-btn flat color="negative" @click="askToDeleteGame(game)">{{$t('button.delete')}}</q-btn>
