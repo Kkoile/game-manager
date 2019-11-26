@@ -5,6 +5,7 @@ export default {
   message: {
     noGames: 'Du hast noch keine Spiele in deiner Sammlung. Füge erst welche hinzu.',
     noGamesYet: 'Noch keine Spiele',
+    nothingFound: 'Nichts gefunden',
     atLeastOnePlayer: 'Selektiere mindestens einen Spieler',
     noProposedGame: 'Keine Spiele für deine Kriterien gefunden',
     confirmDeletion: 'Möchtest du wirklich das folgende Spiel löschen?: \'{name}\'',
@@ -49,6 +50,7 @@ export default {
     name: 'Name',
     minPlayer: 'Min',
     maxPlayer: 'Max',
-    averageTime: 'Spieldauer in Minuten'
+    averageTime: 'Spieldauer in Minuten',
+    searchPlaceholder: 'Suchen...'
   }
 }

@@ -1,10 +1,23 @@
 <template>
   <q-page padding class="flex column">
-    <div id="game-list" class="q-pa-md row justify-center q-gutter-md">
+    <div class="searchBar flex row justify-center q-pa-md">
+      <q-input v-model="searchTerm"
+               style="width: calc(100% - 2.1rem)"
+               dense
+               :placeholder="$t('label.searchPlaceholder')"
+               @keyup.enter="search"/>
+      <q-btn icon="fas fa-search" dense flat @click="search"/>
+    </div>
+    <div v-if="sortedGames.length" class="self-center">[{{this.sortedGames.length}} / {{this.games.length}}]</div>
+    <div class="q-pa-md row justify-center q-gutter-md">
       <div v-if="!games.length" class="flex column items-center">
         <div class="text-h6 text-grey">{{$t('message.noGamesYet')}}</div>
         <q-icon size="10rem" color="grey" name="fas fa-chess-queen" />
         <q-btn class="q-mt-lg" color="primary" @click="newGame">{{$t('button.addFirstGame')}}</q-btn>
+      </div>
+      <div v-if="games.length && !sortedGames.length" class="flex column items-center">
+        <div class="text-h6 text-grey">{{$t('message.nothingFound')}}</div>
+        <q-icon size="10rem" color="grey" name="fas fa-frown-open" />
       </div>
       <q-card
         v-for="game in sortedGames"
@@ -78,6 +91,7 @@
 <script>
 import GameDetail from './GameDetail'
 import MyStorage from '../lib/storage'
+import Fuse from 'fuse.js'
 export default {
   name: 'Games',
   components: {
@@ -94,7 +108,10 @@ export default {
   },
   data () {
     return {
+      fuse: null,
+      searchTerm: '',
       games: [],
+      filteredGames: [],
       showAddGameDialog: false,
       deleteGameConfirmation: false,
       gameToDelete: null,
@@ -103,11 +120,16 @@ export default {
   },
   computed: {
     sortedGames () {
-      return [...this.games].sort((gameA, gameB) => {
+      return [...this.filteredGames].sort((gameA, gameB) => {
         const textA = gameA.name.toUpperCase()
         const textB = gameB.name.toUpperCase()
         return (textA < textB) ? -1 : (textA > textB) ? 1 : 0
       })
+    }
+  },
+  watch: {
+    games (val) {
+      this.fuse = new Fuse(val, { shouldSort: false, threshold: 0.35, keys: [{ name: 'name', weight: 0.7 }, { name: 'categories.value', weight: 0.3 }] })
     }
   },
   methods: {
@@ -115,6 +137,7 @@ export default {
       this.$q.loading.show()
       try {
         this.games = await MyStorage.loadGames()
+        this.filteredGames = this.games
       } catch (error) {
         if (error.message === 'NOT_LOGGED_IN') {
           this.$router.push('login')
@@ -155,12 +178,23 @@ export default {
       this.games.splice(index, 1)
       this.gameToDelete = null
       this.$q.loading.hide()
+    },
+    search () {
+      if (this.searchTerm.trim().length > 0) {
+        this.$q.loading.show()
+        this.filteredGames = this.fuse.search(this.searchTerm)
+        this.$q.loading.hide()
+      } else {
+        this.filteredGames = this.games
+      }
     }
   }
 }
 </script>
 
 <style lang='stylus'>
+  .searchBar
+    width 100%
   .game-element
     width 100%
     max-width 300px

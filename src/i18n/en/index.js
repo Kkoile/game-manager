@@ -5,6 +5,7 @@ export default {
   message: {
     noGames: 'You don\'t have any games in your collection. Manage games first.',
     noGamesYet: 'No Games Yet',
+    nothingFound: 'No Game Found',
     atLeastOnePlayer: 'Select at least one player',
     noProposedGame: 'No game found matching your criteria',
     confirmDeletion: 'Do you really want to delete game: \'{name}\'',
@@ -49,6 +50,7 @@ export default {
     name: 'Name',
     minPlayer: 'Min',
     maxPlayer: 'Max',
-    averageTime: 'Time in Minutes'
+    averageTime: 'Time in Minutes',
+    searchPlaceholder: 'Search...'
   }
 }
